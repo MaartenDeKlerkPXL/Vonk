@@ -414,6 +414,22 @@ Er stond eerder een `CNAME`-bestand in de repo-root voor Pages; dat is
 verwijderd. **Zet Pages niet opnieuw aan en voeg geen `CNAME` toe**: het domein
 wordt in het Netlify-dashboard gekoppeld, niet via een bestand in de repo.
 
+### Waar het draait
+
+| | |
+|---|---|
+| Netlify-site | `vonk-feed` — app.netlify.com/projects/vonk-feed |
+| Standaard-URL | `vonk-feed.netlify.app` |
+| Domein | `vonk.mdeklerk.online` (met de e in *mdeklerk*) |
+
+De sitenaam is `vonk-feed` omdat `vonk` op Netlify wereldwijd al bezet was;
+sitenamen zijn niet per account uniek.
+
+DNS bij TransIP: één CNAME-record met naam `vonk` en waarde
+`vonk-feed.netlify.app.` — die vervangt de oude verwijzing naar
+`maartendeklerkpxl.github.io.`. De `@` A-records horen bij de apex
+(`mdeklerk.online` zelf) en blijven ongemoeid.
+
 ## Deployen
 
 De site is statisch, er is geen build-stap: `publish = "."`. Netlify installeert
