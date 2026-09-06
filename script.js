@@ -20,8 +20,11 @@
      CONFIG
      ------------------------------------------------------ */
   const CONFIG = {
-    // Fase 2: vervang dit door de live JSON-endpoint.
-    dataUrl: 'data/dummy-data.json',
+    // De live feed, gevuld door de scheduled function (fase 2). Lukt die niet
+    // - lokaal draaien zonder Netlify, of nog geen geslaagde run - dan wordt
+    // de rij hieronder op volgorde afgelopen tot er iets bruikbaars komt.
+    dataUrl: '/.netlify/functions/get-feed',
+    fallbackDataUrls: ['data/feed.json', 'data/dummy-data.json'],
     storagePrefix: 'vonk.v1.',
     visibleCards: 3,          // aantal kaarten zichtbaar in de stapel
     swipeThreshold: 0.3,      // fractie van de kaartbreedte
@@ -93,14 +96,36 @@
      DATABRON
      ------------------------------------------------------ */
   const dataSource = {
-    async load() {
-      const res = await fetch(CONFIG.dataUrl, { cache: 'no-cache' });
+    // welke bron het uiteindelijk werd, puur voor de logs en de foutmelding
+    lastUsedUrl: null,
+
+    async loadFrom(url) {
+      const res = await fetch(url, { cache: 'no-cache' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const doc = await res.json();
       const categories = Array.isArray(doc.categories) ? doc.categories : [];
       const items = Array.isArray(doc.items) ? doc.items : [];
-      if (!categories.length || !items.length) throw new Error('Databron bevat geen items');
-      return { categories, items };
+      if (!categories.length || !items.length) throw new Error('databron bevat geen items');
+      return { categories, items, generatedAt: doc.generatedAt || null, origin: doc.source || 'onbekend' };
+    },
+
+    async load() {
+      const urls = [CONFIG.dataUrl].concat(CONFIG.fallbackDataUrls || []);
+      const failures = [];
+
+      for (const url of urls) {
+        try {
+          const data = await this.loadFrom(url);
+          this.lastUsedUrl = url;
+          if (failures.length) {
+            console.warn('[vonk] teruggevallen op ' + url + ' (' + failures.join('; ') + ')');
+          }
+          return data;
+        } catch (err) {
+          failures.push(url + ': ' + err.message);
+        }
+      }
+      throw new Error(failures.join(' | '));
     }
   };
 
@@ -1188,9 +1213,14 @@
       el.deckHint.hidden = true;
       el.errorText.textContent = (location.protocol === 'file:')
         ? 'De feed wordt via fetch geladen; dat lukt niet bij het openen als bestand. Start de app via een lokale webserver (bijvoorbeeld: python3 -m http.server).'
-        : 'De databron is niet bereikbaar (' + err.message + ').';
+        : 'Geen enkele databron reageerde. ' + err.message;
       return;
     }
+
+    console.log(
+      '[vonk] feed geladen via ' + dataSource.lastUsedUrl +
+      ' (' + data.origin + (data.generatedAt ? ', opgehaald ' + data.generatedAt : '') + ')'
+    );
 
     state.categories = data.categories;
     state.categoryById = new Map(data.categories.map((c) => [c.id, c]));

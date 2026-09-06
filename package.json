@@ -1,0 +1,18 @@
+{
+  "name": "vonk",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vonk — persoonlijke swipe-feed PWA met een scheduled function die echte bronnen ophaalt.",
+  "scripts": {
+    "feed:local": "node scripts/run-local.mjs",
+    "feed:verify": "node scripts/verify-sources.mjs",
+    "test": "node --test scripts/test-lib.mjs"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^10.0.9",
+    "cheerio": "^1.1.2",
+    "fast-xml-parser": "^5.2.5"
+  },
+  "engines": { "node": ">=20" }
+}

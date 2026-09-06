@@ -6,7 +6,7 @@
    de laatst geladen data blijft werken.
    ========================================================= */
 
-const VERSION = 'vonk-v2';
+const VERSION = 'vonk-v3';
 const SHELL_CACHE = VERSION + '-shell';
 const DATA_CACHE = VERSION + '-data';
 
@@ -20,16 +20,24 @@ const SHELL_ASSETS = [
   './icons/icon-512.png'
 ];
 
-// Fase 2: zet hier het pad van de live feed naast (of in plaats van) het dummy-bestand.
-const DATA_PATHS = ['/data/dummy-data.json'];
+// Alles wat als "de feed" telt: het live endpoint eerst, daarna de lokale
+// terugvalbestanden. Deze paden gaan network-first met de cache als vangnet,
+// zodat de app offline de laatst geladen feed toont.
+const DATA_PATHS = [
+  '/.netlify/functions/get-feed',
+  '/data/feed.json',
+  '/data/dummy-data.json'
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     Promise.all([
       caches.open(SHELL_CACHE).then((cache) => cache.addAll(SHELL_ASSETS)),
-      // de databron alvast meenemen zodat de eerste offline start ook werkt
+      // Het dummy-bestand alvast meenemen zodat ook de allereerste offline
+      // start iets te tonen heeft. Het live endpoint komt in de cache zodra
+      // het voor het eerst is opgehaald.
       caches.open(DATA_CACHE)
-        .then((cache) => cache.addAll(DATA_PATHS.map((p) => '.' + p)))
+        .then((cache) => cache.add('./data/dummy-data.json'))
         .catch((err) => console.warn('[vonk-sw] databron niet vooraf gecachet:', err))
     ]).then(() => self.skipWaiting())
   );

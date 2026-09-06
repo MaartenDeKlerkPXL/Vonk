@@ -3,3 +3,8 @@ Thumbs.db
 node_modules/
 .idea/
 .vscode/
+
+# lokale feed-uitvoer (wordt gegenereerd, hoort niet in git)
+data/feed.json
+data/feed.local.json
+data/last-run.json

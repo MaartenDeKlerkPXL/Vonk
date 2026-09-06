@@ -1,0 +1,22 @@
+# Vonk — Netlify-configuratie
+#
+# De site is statisch (geen build-stap): index.html en vrienden staan in de root.
+# De feed wordt door een scheduled function opgehaald en in een Netlify Blob
+# gezet; de frontend leest die blob via /.netlify/functions/get-feed.
+
+[build]
+  publish = "."
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Schema van de scheduled function. Dit is de actuele syntax: een tabel per
+# functienaam met een schedule-sleutel (het oudere [[scheduled.functions]]-blok
+# bestaat niet meer). Cron in UTC — 05:00 UTC is 07:00 Nederlandse zomertijd,
+# 06:00 in de winter.
+#
+# Alternatief is `export const config = { schedule: "0 5 * * *" }` in de
+# functie zelf. Zet het op één plek, niet op allebei.
+[functions."fetch-feed"]
+  schedule = "0 5 * * *"

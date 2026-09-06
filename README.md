@@ -42,13 +42,31 @@ databron, zodat Vonk ook offline opent met de laatst geladen data.
 ## Bestanden
 
 ```
-index.html            de drie schermen plus de detail-view
-style.css             dark thema, electric blue, glassmorphism
-script.js             databron, opslag, feed, swipe, archief
-manifest.json         PWA-manifest
-service-worker.js     offline cache
-data/dummy-data.json  categorieën en items
-icons/                app-icons, 192 en 512 px
+index.html                     de drie schermen plus de detail-view
+style.css                      dark thema, electric blue, glassmorphism
+script.js                      databron, opslag, feed, swipe, archief
+manifest.json                  PWA-manifest
+service-worker.js              offline cache
+data/dummy-data.json           terugval als de live feed er niet is
+icons/                         app-icons, 192 en 512 px
+
+netlify.toml                   site-config plus het schema van de cron
+netlify/functions/
+  fetch-feed.js                de scheduled function: haalt alles op
+  get-feed.js                  endpoint waar de frontend zijn feed haalt
+  lib/sources.js               alle bronnen per categorie
+  lib/build-feed.js            de runner die alles samenvoegt
+  lib/rss.js                   RSS-, RDF- en Atom-parser
+  lib/reddit.js                Reddit-specifieke afhandeling
+  lib/scrape-vue-kerkrade.js   scraper voor de bioscoopagenda
+  lib/scrape-roda-jc.js        Google News-zoekopdracht
+  lib/normalize.js             alles naar één item-formaat
+  lib/http.js                  fetch met timeout, retry en user-agent
+  lib/blobs.js                 namen van de blob-store en sleutels
+scripts/
+  run-local.mjs                complete feed-run zonder Netlify
+  verify-sources.mjs           controleert elke bron-URL
+  test-lib.mjs                 tests, draaien zonder netwerk
 ```
 
 ## Opzet
@@ -67,9 +85,143 @@ zijn:
 
 ### Status
 
-Fase 1 is af: de complete app draait op dummy-data.
+Fase 1 en 2 zijn af. Fase 3 — synchronisatie via een syncode, zodat je saves op
+meerdere apparaten terugziet — komt later; `storage` in `script.js` is daar het
+enige aanknopingspunt voor.
 
-- Fase 2 — een scheduled function haalt echte RSS-feeds, Reddit en scrapers op
-  en vervangt `data/dummy-data.json`
-- Fase 3 — synchronisatie via een syncode, zodat je saves op meerdere apparaten
-  terugziet
+## De feed (fase 2)
+
+Een scheduled function haalt elke ochtend 35 bronnen op, normaliseert ze en zet
+het resultaat in een Netlify Blob. De frontend leest die blob via een klein
+endpoint.
+
+```
+cron (netlify.toml)
+  └─ fetch-feed.js ──> 35 bronnen parallel ──> normaliseren ──> Blob "vonk-feed"
+                                                                     │
+  browser ──> get-feed.js ─────────────────────────────────────────> ┘
+```
+
+De function schrijft niet terug naar de repo: dat zou een commit per run
+kosten. Vandaar de blob.
+
+### Wat er misgaat blijft klein
+
+- Elke bron draait geïsoleerd, met een timeout van 12 seconden en één retry.
+  Een bron die 404 geeft of onzin teruglevert, wordt overgeslagen en gelogd.
+- Faalt élke bron van een categorie, dan houdt die categorie de items van de
+  vorige geslaagde run in plaats van leeg te worden.
+- Levert de hele run nul items op, dan wordt de bestaande `feed.json` **niet**
+  overschreven en eindigt de function met een fout in de logs.
+- Herkent de Vue-scraper de pagina niet, dan logt hij een waarschuwing en blijft
+  alleen die ene categorie deze run leeg.
+
+### Terugvalketen in de frontend
+
+`CONFIG.dataUrl` wijst naar het endpoint; `CONFIG.fallbackDataUrls` is de rij
+erachter. De app probeert op volgorde:
+
+1. `/.netlify/functions/get-feed` — de live feed
+2. `data/feed.json` — lokale uitvoer van `npm run feed:local -- --serve`
+3. `data/dummy-data.json` — de dataset uit fase 1
+
+Zo blijft `python3 -m http.server` werken voor frontend-werk, en toont de app
+nooit een leeg scherm doordat er nog geen run is geweest.
+
+### Item-id's
+
+Een id is `<bron-id>-<sha1 van de sourceUrl>`, met tracking-parameters
+(`utm_*`, `fbclid`) er eerst afgehaald. Hetzelfde artikel houdt dus over runs
+heen hetzelfde id — noodzakelijk, want de frontend onthoudt weggeswipete en
+bewaarde items op id. **Wijzig het `id`-veld van een bestaande bron in
+`sources.js` daarom nooit**: alle items van die bron krijgen dan nieuwe id's en
+komen terug in de feed.
+
+## Bronnen
+
+35 bronnen over 15 categorieën. Eén bron hoort bij precies één categorie, dus
+er is geen classificatie nodig.
+
+De categorie-slugs zijn die van fase 1: `leerzaam` (niet `leerzame-artikelen`)
+en `business` (niet `ondernemerschap`), zodat bestaande saves blijven kloppen.
+
+### Wijzigingen ten opzichte van de bronnenlijst uit het plan
+
+| Categorie | Wijziging | Reden |
+|---|---|---|
+| memes | xkcd, CommitStrip en SMBC toegevoegd | de categorie stond volledig op Reddit; zie hieronder |
+| natuur | `r/NatureIsFuckingLit` → `r/AnimalsBeingBros`, iflscience → ScienceDaily | nettere naam, en het iflscience-pad was niet te verifiëren |
+| geschiedenis | Today I Found Out + ScienceDaily Archeologie | het plan had hier geen concrete bron |
+| gerechten, innovatief, ui-ux, psychologie | één niet-Reddit-bron extra | zodat geen categorie op Reddit alleen leunt |
+| vue-kerkrade | URL vastgelegd op `vuecinemas.nl/cinema/kerkrade/nu-in-de-bioscoop` | de actuele agenda-pagina |
+
+**Reddit werkt vermoedelijk niet vanaf Netlify.** Reddit blokkeert verkeer
+vanaf datacenter-IP's, en daar draaien serverless functions op. Een 403 op een
+Reddit-bron is dus verwacht gedrag, geen bug. Daarom heeft elke categorie die
+op Reddit leunde er een gewone feed naast gekregen; een test bewaakt dat.
+
+### Verificatiestatus
+
+De bron-URL's zijn **niet** live geverifieerd tijdens het bouwen: de omgeving
+waarin dit geschreven is, kan alleen bij package-registries en blokkeert al het
+andere uitgaande verkeer (elke bron gaf `HTTP 403 Forbidden` van de proxy).
+De lijst is samengesteld op basis van de opgegeven URL's plus onderzoek naar de
+twijfelgevallen.
+
+Draai daarom vóór of vlak na de eerste deploy:
+
+```bash
+npm run feed:verify
+```
+
+Dat controleert elke bron één voor één en meldt per bron of er parseerbare RSS
+uit komt en hoeveel items. De exitcode is 1 zodra een categorie geen enkele
+werkende bron overhoudt. Wat rood is, vervang je in `netlify/functions/lib/sources.js`.
+
+## Lokaal testen
+
+```bash
+npm install
+
+npm test                  # de pijplijn, met nagebootste bronnen, zonder netwerk
+npm run feed:verify       # elke bron-URL controleren (heeft internet nodig)
+npm run feed:local        # complete run -> data/feed.local.json
+npm run feed:local -- --category=memes
+npm run feed:local -- --serve   # ook naar data/feed.json, zodat de frontend het pakt
+```
+
+`npm test` draait 25 tests zonder netwerk: HTML strippen, snippets afkappen op
+zinsgrens, afbeelding kiezen, id-stabiliteit tussen twee runs, het maximum per
+categorie, en het gedrag als één bron, een hele categorie of alles faalt.
+
+De frontend erbij pakken zonder Netlify:
+
+```bash
+npm run feed:local -- --serve
+python3 -m http.server 8000     # de app valt terug op data/feed.json
+```
+
+Met de Netlify CLI kan het ook compleet:
+
+```bash
+netlify dev                              # inclusief blobs en het endpoint
+netlify functions:invoke fetch-feed      # de scheduled function één keer draaien
+```
+
+De function-logs tonen per run een regel per categorie met het aantal items en
+welke bronnen faalden. Datzelfde verslag staat in de blob onder `last-run.json`
+en is op te vragen via `/.netlify/functions/get-feed?debug=1`.
+
+## Deployen
+
+De site is statisch, er is geen build-stap: `publish = "."`. Netlify installeert
+de dependencies en bundelt de functions zelf.
+
+1. Koppel de repo aan een Netlify-site
+2. Deploy — scheduled functions draaien alleen op gepubliceerde deploys
+3. `netlify functions:invoke fetch-feed` of wacht op de eerste cron-run
+4. Controleer `/.netlify/functions/get-feed?debug=1`
+
+Het schema staat in `netlify.toml` (`0 5 * * *`, UTC — 07:00 Nederlandse
+zomertijd). Zet het op één plek: óf in `netlify.toml`, óf als
+`export const config = { schedule: ... }` in de functie zelf, niet allebei.
