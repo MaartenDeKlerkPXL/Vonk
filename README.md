@@ -399,6 +399,21 @@ De function-logs tonen per run een regel per categorie met het aantal items en
 welke bronnen faalden. Datzelfde verslag staat in de blob onder `last-run.json`
 en is op te vragen via `/.netlify/functions/get-feed?debug=1`.
 
+## Hosting: Netlify, niet GitHub Pages
+
+Dit project draait op **Netlify**. Dat is geen voorkeur maar een vereiste: de
+feed komt van een scheduled function, die schrijft naar Netlify Blobs, en
+`public/supabase-config.js` wordt tijdens de build gegenereerd. GitHub Pages
+serveert alleen statische bestanden en kan geen van drieën.
+
+Op Pages zou de app wel laden, maar terugvallen op `data/dummy-data.json` en
+melden dat synchronisatie niet is ingesteld — precies de twee dingen die fase 2
+en 3 opleveren.
+
+Er stond eerder een `CNAME`-bestand in de repo-root voor Pages; dat is
+verwijderd. **Zet Pages niet opnieuw aan en voeg geen `CNAME` toe**: het domein
+wordt in het Netlify-dashboard gekoppeld, niet via een bestand in de repo.
+
 ## Deployen
 
 De site is statisch, er is geen build-stap: `publish = "."`. Netlify installeert
