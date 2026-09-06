@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0a84ff">
+  <meta name="description" content="Vonk — jouw eigen feed. Kies je categorieën, swipe door de content en bouw je persoonlijke archief.">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Vonk">
+  <title>Vonk — jouw eigen feed</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="aurora" aria-hidden="true">
+    <span class="aurora__blob aurora__blob--1"></span>
+    <span class="aurora__blob aurora__blob--2"></span>
+    <span class="aurora__blob aurora__blob--3"></span>
+  </div>
+
+  <header class="topbar glass">
+    <div class="brand">
+      <svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path d="M17.8 2 6.5 18.2h7.1L12.4 30l13.4-17.6h-7.9z" fill="url(#vonkGrad)"/>
+        <defs>
+          <linearGradient id="vonkGrad" x1="6" y1="2" x2="26" y2="30" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#7cc6ff"/><stop offset="1" stop-color="#0a5cff"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <span class="brand__name">Vonk</span>
+    </div>
+    <div class="topbar__actions">
+      <button type="button" class="icon-btn" id="btnUndo" title="Laatste swipe ongedaan maken" aria-label="Laatste swipe ongedaan maken" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h9a6 6 0 0 1 0 12h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button type="button" class="icon-btn" id="btnSettings" title="Categorieën beheren" aria-label="Categorieën beheren">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="app" id="app">
+
+    <!-- ============ FEED ============ -->
+    <section class="screen screen--feed is-active" id="screen-feed" aria-label="Feed">
+      <div class="deck-area">
+        <div class="deck" id="deck" aria-live="polite"></div>
+
+        <div class="state state--loading" id="stateLoading">
+          <div class="spinner" aria-hidden="true"></div>
+          <p class="state__text">Feed wordt geladen…</p>
+        </div>
+
+        <div class="state state--empty" id="stateEmpty" hidden>
+          <div class="state__glyph" aria-hidden="true">
+            <svg viewBox="0 0 64 64"><path d="M35 6 14 36h13l-2 22 22-30H33z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          </div>
+          <h2 class="state__title">Je bent helemaal bij</h2>
+          <p class="state__text" id="emptyText">Alles uit je categorieën is langsgekomen. Kom later terug voor nieuwe vonken.</p>
+          <div class="state__actions">
+            <button type="button" class="btn btn--ghost" data-goto="categories">Categorieën aanpassen</button>
+            <button type="button" class="btn btn--ghost" data-goto="saved">Bekijk je archief</button>
+          </div>
+        </div>
+
+        <div class="state state--error" id="stateError" hidden>
+          <h2 class="state__title">Kon de feed niet laden</h2>
+          <p class="state__text" id="errorText"></p>
+          <button type="button" class="btn btn--primary" id="btnRetry">Opnieuw proberen</button>
+        </div>
+      </div>
+
+      <div class="deck-controls" id="deckControls">
+        <button type="button" class="fab fab--skip" id="btnSkip" title="Niet leuk (←)" aria-label="Niet leuk">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+        </button>
+        <button type="button" class="fab fab--undo" id="btnUndoBig" title="Ongedaan maken (Z)" aria-label="Ongedaan maken" disabled>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 9h9a6 6 0 0 1 0 12h-3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button type="button" class="fab fab--save" id="btnSave" title="Bewaren (→)" aria-label="Bewaren">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4-7 4V5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="hint" id="deckHint">Sleep naar links om over te slaan, naar rechts om te bewaren. Tik voor het hele artikel.</p>
+    </section>
+
+    <!-- ============ BEWAARD ============ -->
+    <section class="screen screen--saved" id="screen-saved" aria-label="Bewaard" hidden>
+      <div class="saved-head">
+        <h1 class="screen__title">Bewaard</h1>
+        <p class="screen__sub" id="savedCount"></p>
+        <div class="search glass">
+          <svg class="search__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="m20 20-3.5-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <input type="search" id="savedSearch" class="search__input" placeholder="Zoek in je archief…" aria-label="Zoek in bewaarde items" autocomplete="off">
+          <button type="button" class="search__clear" id="savedSearchClear" aria-label="Zoekopdracht wissen" hidden>&times;</button>
+        </div>
+        <div class="chip-row" id="savedFilters" role="group" aria-label="Filter op categorie"></div>
+      </div>
+      <div class="saved-list" id="savedList"></div>
+      <div class="state state--empty" id="savedEmpty" hidden>
+        <div class="state__glyph" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><path d="M18 8h28a2 2 0 0 1 2 2v46l-16-9-16 9V10a2 2 0 0 1 2-2z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+        </div>
+        <h2 class="state__title" id="savedEmptyTitle">Nog niets bewaard</h2>
+        <p class="state__text" id="savedEmptyText">Swipe in de feed naar rechts om iets in je archief te zetten.</p>
+      </div>
+    </section>
+
+    <!-- ============ CATEGORIEËN ============ -->
+    <section class="screen screen--categories" id="screen-categories" aria-label="Categorieën" hidden>
+      <div class="cat-head">
+        <h1 class="screen__title" id="catTitle">Wat wil je volgen?</h1>
+        <p class="screen__sub" id="catSub">Kies je onderwerpen. Alleen deze categorieën komen in je feed.</p>
+        <div class="cat-head__tools">
+          <button type="button" class="btn btn--ghost btn--sm" id="btnSelectAll">Alles aan</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="btnSelectNone">Alles uit</button>
+        </div>
+      </div>
+      <div class="cat-grid" id="catGrid"></div>
+      <div class="cat-footer glass">
+        <span class="cat-footer__count" id="catCount"></span>
+        <button type="button" class="btn btn--primary" id="btnCatDone">Naar mijn feed</button>
+      </div>
+    </section>
+  </main>
+
+  <nav class="tabbar glass" aria-label="Hoofdnavigatie">
+    <button type="button" class="tab is-active" data-screen="feed" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <span>Feed</span>
+    </button>
+    <button type="button" class="tab" data-screen="saved">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4-7 4V5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      <span>Bewaard</span>
+      <span class="tab__badge" id="tabBadge" hidden>0</span>
+    </button>
+    <button type="button" class="tab" data-screen="categories">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="3.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="3.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="13.5" y="13.5" width="7" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+      <span>Categorieën</span>
+    </button>
+  </nav>
+
+  <!-- ============ DETAIL ============ -->
+  <div class="detail" id="detail" role="dialog" aria-modal="true" aria-labelledby="detailTitle" hidden>
+    <div class="detail__backdrop" data-close-detail></div>
+    <article class="detail__panel glass" role="document">
+      <button type="button" class="detail__close icon-btn" id="detailClose" aria-label="Sluiten">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      </button>
+      <div class="detail__scroll" id="detailScroll">
+        <figure class="detail__figure" id="detailFigure" hidden><img id="detailImage" alt="" loading="lazy"></figure>
+        <div class="detail__body">
+          <div class="detail__meta">
+            <span class="cat-tag" id="detailCategory"></span>
+            <time class="detail__date" id="detailDate"></time>
+          </div>
+          <h2 class="detail__title" id="detailTitle"></h2>
+          <div class="detail__text" id="detailText"></div>
+          <a class="detail__source" id="detailSource" href="#" target="_blank" rel="noopener noreferrer">Lees bij de bron
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 17 17 7M9 7h8v8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="detail__actions" id="detailActions"></div>
+    </article>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
