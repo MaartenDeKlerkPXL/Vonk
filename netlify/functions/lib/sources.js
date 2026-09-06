@@ -31,7 +31,17 @@ export const CATEGORIES = [
   { id: 'geschiedenis', label: 'Geschiedenis & weetjes', icon: '◴', accent: '#d9a86c', description: 'Verhalen uit het verleden.' },
   { id: 'natuur', label: 'Natuur & dieren', icon: '▲', accent: '#6fd66f', description: 'Dieren, landschappen, ecologie.' },
   { id: 'reizen', label: 'Reizen & avontuur', icon: '◆', accent: '#4dd0e1', description: 'Plekken om ooit naartoe te gaan.' },
-  { id: 'business', label: 'Ondernemerschap & business', icon: '▰', accent: '#ff9f6b', description: 'Bouwen, verkopen, opschalen.' }
+  { id: 'business', label: 'Ondernemerschap & business', icon: '▰', accent: '#ff9f6b', description: 'Bouwen, verkopen, opschalen.' },
+
+  // ---------- fase 4 ----------
+  { id: 'pxl-nieuws', label: 'Hogeschool PXL', icon: '▥', accent: '#6fc3ff', description: 'Nieuws over de hogeschool.' },
+  { id: 'the-ginger-one', label: 'The Ginger One', icon: '⚑', accent: '#ff7a3d', description: 'Persberichten van rallycoureur Thomas Martens.' },
+  { id: 'nl-hiphop-releases', label: 'NL hiphop releases', icon: '◍', accent: '#c98bff', description: 'Nieuwe Nederlandse hiphop.' },
+  { id: 'f1-kalender', label: 'F1-kalender', icon: '⚑', accent: '#ff4d4d', description: 'Het racekalender van dit seizoen.' },
+  { id: 'f1-memes', label: 'F1-memes', icon: '◉', accent: '#ff6b6b', description: 'Humor uit de paddock.' },
+  { id: 'memes-dev', label: 'Programmeurmemes', icon: '◧', accent: '#7bd8ff', description: 'Code- en webdevhumor.' },
+  { id: 'memes-auto', label: 'Auto- & motorsportmemes', icon: '◑', accent: '#ffb04d', description: 'Humor over auto\'s en racen.' },
+  { id: 'memes-voetbal', label: 'Voetbalmemes', icon: '◐', accent: '#5ce08a', description: 'Humor uit het voetbal.' }
 ];
 
 export const SOURCES = [
@@ -50,14 +60,11 @@ export const SOURCES = [
   { id: 'newatlas', name: 'New Atlas', category: 'innovatief', type: 'rss', url: 'https://newatlas.com/index.rss' },
   { id: 'r-futurology', name: 'r/Futurology', category: 'innovatief', type: 'reddit', url: 'https://www.reddit.com/r/Futurology/.rss', risk: 'reddit-blokkeert-datacenter-ip' },
 
-  // ---------- Memes ----------
-  // Deze categorie stond in het plan volledig op Reddit. Omdat Reddit
-  // datacenter-IP's weert, staan er drie stripfeeds naast die het altijd doen.
-  { id: 'xkcd', name: 'xkcd', category: 'memes', type: 'rss', url: 'https://xkcd.com/rss.xml' },
-  { id: 'commitstrip', name: 'CommitStrip', category: 'memes', type: 'rss', url: 'https://www.commitstrip.com/en/feed/' },
-  { id: 'smbc', name: 'SMBC', category: 'memes', type: 'rss', url: 'https://www.smbc-comics.com/comic/rss' },
+  // ---------- Memes (algemeen) ----------
+  // De stripfeeds die hier in fase 2 stonden zijn naar memes-dev verhuisd;
+  // Bored Panda is het niet-Reddit-alternatief dat overblijft.
+  { id: 'boredpanda', name: 'Bored Panda', category: 'memes', type: 'rss', url: 'https://www.boredpanda.com/feed/', risk: 'niet-geverifieerd' },
   { id: 'r-wholesome', name: 'r/wholesomememes', category: 'memes', type: 'reddit', url: 'https://www.reddit.com/r/wholesomememes/.rss', risk: 'reddit-blokkeert-datacenter-ip' },
-  { id: 'r-proghumor', name: 'r/ProgrammerHumor', category: 'memes', type: 'reddit', url: 'https://www.reddit.com/r/ProgrammerHumor/.rss', risk: 'reddit-blokkeert-datacenter-ip' },
 
   // ---------- Leerzame artikelen ----------
   { id: 'aeon', name: 'Aeon', category: 'leerzaam', type: 'rss', url: 'https://aeon.co/feed.rss' },
@@ -100,7 +107,52 @@ export const SOURCES = [
 
   // ---------- Ondernemerschap & business ----------
   { id: 'inc', name: 'Inc.', category: 'business', type: 'rss', url: 'https://www.inc.com/rss/' },
-  { id: 'entrepreneur', name: 'Entrepreneur', category: 'business', type: 'rss', url: 'https://www.entrepreneur.com/latest.rss' }
+  { id: 'entrepreneur', name: 'Entrepreneur', category: 'business', type: 'rss', url: 'https://www.entrepreneur.com/latest.rss' },
+
+  // ---------- Hogeschool PXL ----------
+  // Geen eigen RSS gevonden; dezelfde aanpak als Roda JC.
+  { id: 'pxl-news', name: 'Google News - "Hogeschool PXL"', category: 'pxl-nieuws', type: 'google-news', url: 'https://news.google.com/rss/search?q=%22Hogeschool+PXL%22&hl=nl&gl=BE&ceid=BE:nl' },
+
+  // ---------- The Ginger One ----------
+  // Gedeelde feed van persbureau BUZZ met meerdere cliënten: alleen items
+  // over Thomas Martens / The Ginger One horen hier thuis.
+  {
+    id: 'buzz-prezly', name: 'BUZZ (Prezly)', category: 'the-ginger-one', type: 'rss',
+    url: 'https://buzz.prezly.com/feed.rss',
+    match: ['ginger one', 'thomas martens'],
+    risk: 'gedeelde-feed-gefilterd'
+  },
+
+  // ---------- NL hiphop releases ----------
+  // 101Barz heeft geen bevestigde RSS (zie README); Google News is de
+  // tijdelijke vervanger.
+  { id: 'hiphop-news', name: 'Google News - NL hiphop releases', category: 'nl-hiphop-releases', type: 'google-news', url: 'https://news.google.com/rss/search?q=%22nieuwe+releases%22+hiphop+Nederland&hl=nl&gl=NL&ceid=NL:nl' },
+
+  // ---------- F1-kalender ----------
+  // Geen feed maar een JSON-API: de opvolger van Ergast. De .json-extensie
+  // is nodig, want zonder komt er XML terug.
+  { id: 'f1-kalender', name: 'Jolpica F1', category: 'f1-kalender', type: 'f1', url: 'https://api.jolpi.ca/ergast/f1/current.json' },
+
+  // ---------- F1-memes ----------
+  // Zwakke categorie: alleen Reddit, en dat werkt vanaf Netlify vermoedelijk
+  // niet. Bewust geaccepteerd tot er een betere bron opduikt.
+  { id: 'r-formuladank', name: 'r/formuladank', category: 'f1-memes', type: 'reddit', url: 'https://www.reddit.com/r/formuladank/.rss', risk: 'reddit-blokkeert-datacenter-ip' },
+
+  // ---------- Programmeurmemes ----------
+  { id: 'xkcd', name: 'xkcd', category: 'memes-dev', type: 'rss', url: 'https://xkcd.com/rss.xml' },
+  { id: 'commitstrip', name: 'CommitStrip', category: 'memes-dev', type: 'rss', url: 'https://www.commitstrip.com/en/feed/' },
+  { id: 'smbc', name: 'SMBC', category: 'memes-dev', type: 'rss', url: 'https://www.smbc-comics.com/comic/rss' },
+  { id: 'r-proghumor', name: 'r/ProgrammerHumor', category: 'memes-dev', type: 'reddit', url: 'https://www.reddit.com/r/ProgrammerHumor/.rss', risk: 'reddit-blokkeert-datacenter-ip' },
+
+  // ---------- Auto- & motorsportmemes ----------
+  // Jalopnik is geen memesite maar autocultuur met een humoristische inslag;
+  // het beste niet-Reddit-alternatief dat ik kon vinden.
+  { id: 'jalopnik', name: 'Jalopnik', category: 'memes-auto', type: 'rss', url: 'https://jalopnik.com/rss', risk: 'niet-geverifieerd' },
+  { id: 'r-carmemes', name: 'r/carmemes', category: 'memes-auto', type: 'reddit', url: 'https://www.reddit.com/r/carmemes/.rss', risk: 'reddit-blokkeert-datacenter-ip' },
+
+  // ---------- Voetbalmemes ----------
+  // Geen bruikbaar niet-Reddit-alternatief gevonden; dunne categorie.
+  { id: 'r-footballmemes', name: 'r/footballmemes', category: 'memes-voetbal', type: 'reddit', url: 'https://www.reddit.com/r/footballmemes/.rss', risk: 'reddit-blokkeert-datacenter-ip' }
 ];
 
 /** Aantal items dat per categorie in feed.json terechtkomt. */
@@ -125,3 +177,15 @@ export function validateSources() {
   }
   return problems;
 }
+
+/**
+ * Categorieën die volledig op Reddit leunen. Geen fout - Reddit weert
+ * datacenter-IP's, dus deze blijven op Netlify waarschijnlijk leeg. Bewust
+ * geaccepteerd voor f1-memes en voetbalmemes; de run logt het per keer.
+ */
+export const REDDIT_ONLY_CATEGORIES = CATEGORIES
+  .filter((c) => {
+    const own = SOURCES.filter((s) => s.category === c.id);
+    return own.length > 0 && own.every((s) => s.type === 'reddit');
+  })
+  .map((c) => c.id);

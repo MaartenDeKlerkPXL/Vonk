@@ -1,8 +1,9 @@
 /**
- * Roda JC via een Google News RSS-zoekopdracht.
+ * Bronnen die op een Google News RSS-zoekopdracht draaien: Roda JC,
+ * Hogeschool PXL en de Nederlandse hiphop-releases.
  *
  * Google News geeft korte snippets zonder volledige artikeltekst, dus
- * fullContent is hier gelijk aan de snippet — er is niets rijkers beschikbaar
+ * fullContent is hier gelijk aan de snippet - er is niets rijkers beschikbaar
  * zonder het bronartikel zelf te scrapen, en dat zou per artikel een andere
  * site betekenen.
  */
@@ -15,7 +16,7 @@ function stripPublisher(title) {
   return String(title || '').replace(/\s+-\s+[^-]{2,40}$/, '').trim();
 }
 
-export async function fetchRodaJc(source, options = {}) {
+export async function fetchGoogleNews(source, options = {}) {
   const entries = await fetchFeed(source.url, options);
 
   return entries

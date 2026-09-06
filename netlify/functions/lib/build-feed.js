@@ -10,25 +10,45 @@
  * geïsoleerd; wat faalt wordt gelogd en overgeslagen.
  */
 
-import { CATEGORIES, SOURCES, ITEMS_PER_CATEGORY, validateSources } from './sources.js';
+import {
+  CATEGORIES, SOURCES, ITEMS_PER_CATEGORY, validateSources, REDDIT_ONLY_CATEGORIES
+} from './sources.js';
 import { mapWithConcurrency } from './http.js';
 import { fetchFeed } from './rss.js';
 import { fetchRedditFeed } from './reddit.js';
-import { fetchRodaJc } from './scrape-roda-jc.js';
+import { fetchGoogleNews } from './google-news.js';
+import { fetchF1Calendar } from './f1-calendar.js';
 import { fetchVueKerkrade } from './scrape-vue-kerkrade.js';
-import { normalizeEntry } from './normalize.js';
+import { normalizeEntry, matchesSource, canonicalUrl } from './normalize.js';
 
-export const FEED_VERSION = 2;
+export const FEED_VERSION = 3;
 
 /** Haalt één bron op en levert genormaliseerde items terug. */
 async function collectSource(source, fetchOptions) {
+  const result = await collectRaw(source, fetchOptions);
+
+  // Gedeelde feeds (zoals het persbureau achter The Ginger One) leveren ook
+  // berichten over andere onderwerpen; die vallen hier af.
+  if (source.match) {
+    const voor = result.items.length;
+    result.items = result.items.filter((item) => matchesSource(item, source.match));
+    result.note = [result.note, 'gefilterd: ' + result.items.length + '/' + voor + ' items']
+      .filter(Boolean).join(', ');
+  }
+  return result;
+}
+
+async function collectRaw(source, fetchOptions) {
   switch (source.type) {
     case 'reddit': {
       const entries = await fetchRedditFeed(source.url, fetchOptions);
       return { items: entries.map((e) => normalizeEntry(e, source)).filter(Boolean) };
     }
     case 'google-news': {
-      return { items: await fetchRodaJc(source, fetchOptions) };
+      return { items: await fetchGoogleNews(source, fetchOptions) };
+    }
+    case 'f1': {
+      return { items: await fetchF1Calendar(source, fetchOptions) };
     }
     case 'scrape': {
       const { items, warning, strategy } = await fetchVueKerkrade(source, fetchOptions);
@@ -106,6 +126,9 @@ export async function buildFeed(options = {}) {
 
   const items = [];
   const categoryReport = {};
+  // Eén artikel kan in twee bronlijsten voorkomen (een F1-meme is ook een
+  // motorsport-meme). De eerste categorie die hem oppikt houdt hem.
+  const gezieneUrls = new Set();
 
   for (const category of CATEGORIES) {
     const collected = byCategory.get(category.id) || [];
@@ -119,7 +142,15 @@ export async function buildFeed(options = {}) {
       }
     }
 
-    let list = [...unique.values()].sort(newestFirst).slice(0, ITEMS_PER_CATEGORY);
+    let list = [...unique.values()]
+      .filter((item) => {
+        const sleutel = canonicalUrl(item.sourceUrl);
+        if (gezieneUrls.has(sleutel)) return false;
+        gezieneUrls.add(sleutel);
+        return true;
+      })
+      .sort(newestFirst)
+      .slice(0, ITEMS_PER_CATEGORY);
     let carriedOver = false;
 
     // Alle bronnen van deze categorie faalden: houd vast wat we al hadden,
@@ -138,8 +169,17 @@ export async function buildFeed(options = {}) {
       count: list.length,
       carriedOver,
       sourcesFailed: tally ? tally.failed : 0,
-      sourcesTotal: tally ? tally.total : 0
+      sourcesTotal: tally ? tally.total : 0,
+      // bewust geaccepteerd dat deze op Netlify leeg kan blijven
+      redditOnly: REDDIT_ONLY_CATEGORIES.includes(category.id)
     };
+
+    if (!list.length && REDDIT_ONLY_CATEGORIES.includes(category.id)) {
+      logger.warn(
+        '[vonk] ' + category.id + ' is leeg: deze categorie heeft alleen Reddit-bronnen ' +
+        'en Reddit weigert datacenter-IP\'s. Bekend en geaccepteerd.'
+      );
+    }
   }
 
   const okSources = perSource.filter((s) => s.ok && s.count > 0).length;
@@ -179,7 +219,7 @@ export function formatReport(report) {
     const flags = [];
     if (info.carriedOver) flags.push('overgenomen uit vorige run');
     if (info.sourcesFailed) flags.push(info.sourcesFailed + '/' + info.sourcesTotal + ' bron(nen) mislukt');
-    if (!info.count) flags.push('LEEG');
+    if (!info.count) flags.push(info.redditOnly ? 'LEEG (alleen Reddit, verwacht)' : 'LEEG');
     lines.push('[vonk]   ' + id.padEnd(14) + String(info.count).padStart(3) +
       (flags.length ? '  — ' + flags.join(', ') : ''));
   }

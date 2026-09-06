@@ -188,12 +188,29 @@ export function normalizeEntry(entry, source) {
   return {
     id: stableId(source.id, sourceUrl, headline),
     category: source.category,
+    // Welke feed dit item leverde. Nodig om per bron te kunnen zien hoeveel
+    // er wordt weggeswipet, niet alleen per categorie.
+    sourceId: source.id,
+    sourceName: source.name,
     headline: headline.slice(0, 300),
     snippet,
     fullContent: fullContent.slice(0, 8000),
     photoUrl: pickImage(entry),
     sourceUrl,
-    publishedAt: toIsoDate(entry.published),
-    sourceName: source.name
+    publishedAt: toIsoDate(entry.published)
   };
+}
+
+/**
+ * Sommige bronnen zijn gedeeld: het Prezly-adres van persbureau BUZZ bevat
+ * de berichten van al hun cliënten. Met `match` in sources.js houden we
+ * alleen over wat over het juiste onderwerp gaat.
+ *
+ * @param {object} item        genormaliseerd item
+ * @param {string[]} needles   zoektermen, hoofdletterongevoelig
+ */
+export function matchesSource(item, needles) {
+  if (!Array.isArray(needles) || !needles.length) return true;
+  const hay = (item.headline + ' ' + item.snippet + ' ' + item.fullContent).toLowerCase();
+  return needles.some((needle) => hay.includes(String(needle).toLowerCase()));
 }

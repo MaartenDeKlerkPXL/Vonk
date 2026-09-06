@@ -86,7 +86,16 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4h12a1 1 0 0 1 1 1v15l-7-4-7 4V5a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
         </button>
       </div>
-      <p class="hint" id="deckHint">Sleep naar links om over te slaan, naar rechts om te bewaren. Tik voor het hele artikel.</p>
+      <div class="browse" id="browseBar">
+        <button type="button" class="browse__btn" id="btnPrev" title="Vorige (↑)" aria-label="Vorig artikel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span class="browse__position" id="browsePosition" aria-live="polite"></span>
+        <button type="button" class="browse__btn" id="btnNext" title="Volgende (↓)" aria-label="Volgend artikel">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <p class="hint" id="deckHint">Links of rechts vegen slaat over of bewaart. Omhoog of omlaag bladert alleen. Tik voor het hele artikel.</p>
     </section>
 
     <!-- ============ BEWAARD ============ -->
@@ -152,6 +161,18 @@
 
         <p class="sync__note" id="syncNote"></p>
       </section>
+
+      <details class="quality glass" id="qualityPanel">
+        <summary class="quality__summary">
+          <span class="quality__title">Feed-kwaliteit</span>
+          <span class="quality__count" id="qualityCount"></span>
+        </summary>
+        <p class="quality__intro">
+          Hoeveel je per bron hebt weggeswipet. Levert een bron structureel niets op wat je
+          leuk vindt, dan weet je welke feed eruit mag.
+        </p>
+        <div class="quality__list" id="qualityList"></div>
+      </details>
 
       <div class="cat-footer glass">
         <span class="cat-footer__count" id="catCount"></span>

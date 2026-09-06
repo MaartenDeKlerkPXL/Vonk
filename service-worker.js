@@ -6,7 +6,7 @@
    de laatst geladen data blijft werken.
    ========================================================= */
 
-const VERSION = 'vonk-v5';
+const VERSION = 'vonk-v6';
 const SHELL_CACHE = VERSION + '-shell';
 const DATA_CACHE = VERSION + '-data';
 

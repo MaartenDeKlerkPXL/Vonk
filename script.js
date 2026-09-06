@@ -29,6 +29,15 @@
     visibleCards: 3,          // aantal kaarten zichtbaar in de stapel
     swipeThreshold: 0.3,      // fractie van de kaartbreedte
     swipeVelocity: 0.55,      // px/ms — snelle flick committeert ook
+    // Verticaal bladeren en horizontaal swipen mogen elkaar niet in de weg
+    // zitten: pas als één richting duidelijk overheerst wordt de as gekozen,
+    // en daarna blijft die vast voor de rest van het gebaar.
+    axisRatio: 1.3,           // hoeveel de winnende richting moet overheersen
+    axisDecideAt: 8,          // px voordat er een as gekozen wordt
+    browseThreshold: 0.18,    // fractie van de kaarthoogte om te bladeren
+    browseVelocity: 0.4,      // px/ms
+    wheelThreshold: 24,       // scrollafstand die als één stap telt
+    wheelCooldownMs: 320,
     tapMaxMove: 10,           // px waarbinnen een druk als tik telt
     tapMaxTime: 500,          // ms
     toastMs: 2400
@@ -103,6 +112,21 @@
     }
   };
 
+  /**
+   * Leest beide vormen van de weggeswipete lijst: fase 1-3 sloeg alleen
+   * id's op, fase 4 hele items. Oude id's blijven werken als item met
+   * alleen een id, zodat de feed ze niet opnieuw laat zien.
+   */
+  function toDismissedMap(value) {
+    const map = new Map();
+    if (!Array.isArray(value)) return map;
+    for (const entry of value) {
+      if (typeof entry === 'string') map.set(entry, { id: entry });
+      else if (entry && entry.id) map.set(entry.id, entry);
+    }
+    return map;
+  }
+
   /* ------------------------------------------------------
      SYNC-BRUG
      Alles wat met Supabase praat zit in sync.js. Hier staat alleen
@@ -123,7 +147,7 @@
   function applyRemoteState(data) {
     state.saved = Array.isArray(data.saved) ? data.saved : [];
     state.savedIds = new Set(state.saved.map((i) => i.id));
-    state.dismissed = new Set(Array.isArray(data.dismissed) ? data.dismissed : []);
+    state.dismissed = toDismissedMap(data.dismissed);
 
     const known = new Set(state.categories.map((c) => c.id));
     state.followed = new Set(
@@ -186,10 +210,13 @@
     categoryById: new Map(),
     items: [],
     followed: new Set(),
-    dismissed: new Set(),
+    // fase 4: volledige items, niet alleen id's — zodat het scherm
+    // Feed-kwaliteit per bron kan tellen wat er wordt weggeswipet
+    dismissed: new Map(),
     saved: [],              // volledige item-objecten (bron kan wijzigen)
     savedIds: new Set(),
-    queue: [],              // feed-stapel, index 0 = bovenste kaart
+    queue: [],              // feed-stapel
+    cursor: 0,              // welke kaart bovenop ligt; browsen verschuift dit
     lastAction: null,       // { type: 'save' | 'dismiss', item }
     screen: 'feed',
     detail: null,           // { item, context }
@@ -214,7 +241,9 @@
       'detailDate', 'detailTitle', 'detailText', 'detailSource', 'detailActions', 'detailScroll',
       'toast',
       'syncPanel', 'syncStatus', 'syncIntro', 'syncCodeRow', 'syncCode', 'syncNote',
-      'btnSyncCopy', 'btnSyncUnlink', 'btnSyncEnable', 'syncInput', 'btnSyncLink'
+      'btnSyncCopy', 'btnSyncUnlink', 'btnSyncEnable', 'syncInput', 'btnSyncLink',
+      'browseBar', 'browsePosition', 'btnPrev', 'btnNext',
+      'qualityPanel', 'qualityList', 'qualityCount'
     ];
     ids.forEach((id) => { el[id] = document.getElementById(id); });
     el.screens = {
@@ -335,6 +364,7 @@
       round++;
     }
     state.queue = queue;
+    state.cursor = 0;
   }
 
   /* ------------------------------------------------------
@@ -404,6 +434,7 @@
 
     updateCategoryFooter();
     renderSync();
+    renderQuality();
 
     const first = !state.onboarded;
     el.catTitle.textContent = first ? 'Wat wil je volgen?' : 'Jouw categorieën';
@@ -433,6 +464,76 @@
       ? 'Nog geen categorie gekozen'
       : plural(n, 'categorie gevolgd', 'categorieën gevolgd');
     el.btnCatDone.disabled = n === 0;
+  }
+
+  /* ------------------------------------------------------
+     FEED-KWALITEIT
+     Telt per bron hoeveel je hebt weggeswipet. Niet om artikelen terug
+     te lezen, maar om te zien welke feed structureel niets oplevert.
+     ------------------------------------------------------ */
+  function renderQuality() {
+    const lijst = el.qualityList;
+    lijst.textContent = '';
+
+    const items = dismissedAsList();
+    el.qualityCount.textContent = items.length
+      ? plural(items.length, 'item overgeslagen', 'items overgeslagen')
+      : 'nog niets overgeslagen';
+
+    if (!items.length) {
+      const leeg = document.createElement('p');
+      leeg.className = 'quality__empty';
+      leeg.textContent = 'Zodra je artikelen wegveegt, zie je hier per bron hoeveel dat er zijn.';
+      lijst.appendChild(leeg);
+      return;
+    }
+
+    // groeperen op bron; items van vóór fase 4 hebben er nog geen
+    const perBron = new Map();
+    for (const item of items) {
+      const sleutel = item.sourceId || 'onbekend';
+      if (!perBron.has(sleutel)) {
+        perBron.set(sleutel, {
+          id: sleutel,
+          naam: item.sourceName || (item.sourceId ? item.sourceId : 'Onbekende bron'),
+          category: item.category || null,
+          aantal: 0
+        });
+      }
+      perBron.get(sleutel).aantal++;
+    }
+
+    const rijen = [...perBron.values()].sort((a, b) => b.aantal - a.aantal);
+    const hoogste = rijen[0].aantal;
+
+    for (const rij of rijen) {
+      const cat = rij.category ? state.categoryById.get(rij.category) : null;
+      const row = document.createElement('div');
+      row.className = 'quality-row';
+      row.style.setProperty('--cat-accent', (cat && cat.accent) || '#0a84ff');
+
+      const naam = document.createElement('span');
+      naam.className = 'quality-row__name';
+      naam.textContent = rij.naam;
+
+      const meta = document.createElement('span');
+      meta.className = 'quality-row__meta';
+      meta.textContent = [cat ? cat.label : rij.category, rij.id !== 'onbekend' ? rij.id : null]
+        .filter(Boolean).join(' · ') || 'bron onbekend (van vóór deze versie)';
+
+      const aantal = document.createElement('span');
+      aantal.className = 'quality-row__count';
+      aantal.textContent = String(rij.aantal);
+
+      const bar = document.createElement('div');
+      bar.className = 'quality-row__bar';
+      const vulling = document.createElement('span');
+      vulling.style.width = Math.round((rij.aantal / hoogste) * 100) + '%';
+      bar.appendChild(vulling);
+
+      row.append(naam, aantal, meta, bar);
+      lijst.appendChild(row);
+    }
   }
 
   /* ------------------------------------------------------
@@ -548,6 +649,18 @@
         'apparaat blijft gewoon werken met de oude code.', null);
       toast('Sync losgekoppeld');
     });
+
+    // Bij het openklappen onderaan de pagina zou het paneel half onder de
+    // vaste knopbalk verdwijnen; even meescrollen scheelt zoeken.
+    if (el.qualityPanel) {
+      el.qualityPanel.addEventListener('toggle', () => {
+        if (!el.qualityPanel.open) return;
+        renderQuality();
+        setTimeout(() => {
+          el.qualityPanel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        }, 60);
+      });
+    }
 
     el.btnSyncLink.addEventListener('click', () => linkSync());
     el.syncInput.addEventListener('keydown', (e) => {
@@ -698,7 +811,8 @@
 
   function renderDeck() {
     const deck = el.deck;
-    const wanted = state.queue.slice(0, CONFIG.visibleCards);
+    clampCursor();
+    const wanted = state.queue.slice(state.cursor, state.cursor + CONFIG.visibleCards);
     const existing = new Map();
     Array.from(deck.children).forEach((node) => {
       if (node.classList.contains('is-flying')) return;
@@ -745,6 +859,49 @@
     updateFeedChrome();
   }
 
+  /** Houdt de cursor binnen de stapel. */
+  function clampCursor() {
+    if (state.cursor > state.queue.length - 1) state.cursor = Math.max(0, state.queue.length - 1);
+    if (state.cursor < 0) state.cursor = 0;
+  }
+
+  /** Het item dat nu bovenop ligt. */
+  function currentItem() {
+    return state.queue[state.cursor] || null;
+  }
+
+  /**
+   * Bladeren door de stapel zonder iets op te slaan of weg te gooien.
+   * Puur kijken, zoals scrollen door een tijdlijn.
+   * @param {number} step +1 = volgende, -1 = vorige
+   */
+  function browseBy(step) {
+    if (state.busy || !state.queue.length) return false;
+    const doel = state.cursor + step;
+    if (doel < 0 || doel > state.queue.length - 1) {
+      // even laten voelen dat je aan het einde zit
+      const card = el.deck.querySelector('.card--top');
+      if (card) {
+        card.classList.add('card--bounce');
+        setTimeout(() => card.classList.remove('card--bounce'), 320);
+      }
+      return false;
+    }
+    state.cursor = doel;
+    renderDeck();
+    updateBrowsePosition();
+    return true;
+  }
+
+  function updateBrowsePosition() {
+    if (!el.browsePosition) return;
+    const totaal = state.queue.length;
+    el.browsePosition.textContent = totaal ? (state.cursor + 1) + ' / ' + totaal : '';
+    el.browsePosition.hidden = !totaal;
+    if (el.btnPrev) el.btnPrev.disabled = state.cursor === 0 || !totaal;
+    if (el.btnNext) el.btnNext.disabled = state.cursor >= totaal - 1 || !totaal;
+  }
+
   function updateFeedChrome() {
     const hasCards = state.queue.length > 0;
     const noCategories = state.followed.size === 0;
@@ -753,6 +910,7 @@
     el.stateEmpty.hidden = hasCards;
     el.deckControls.hidden = !hasCards;
     el.deckHint.hidden = !hasCards;
+    el.browseBar.hidden = !hasCards;
     el.btnSkip.disabled = !hasCards;
     el.btnSave.disabled = !hasCards;
 
@@ -770,6 +928,7 @@
       }
     }
     updateUndoButtons();
+    updateBrowsePosition();
   }
 
   function updateUndoButtons() {
@@ -804,9 +963,13 @@
     let startX = 0, startY = 0, startTime = 0;
     let dx = 0, dy = 0;
     let moved = false;
+    let axis = null;          // null | 'x' | 'y' — eenmaal gekozen, blijft vast
 
     function threshold() {
       return Math.max(60, card.offsetWidth * CONFIG.swipeThreshold);
+    }
+    function browseThreshold() {
+      return Math.max(50, card.offsetHeight * CONFIG.browseThreshold);
     }
 
     function onDown(e) {
@@ -815,6 +978,7 @@
       if (e.button !== undefined && e.button !== 0) return;
       dragging = true;
       moved = false;
+      axis = null;
       pointerId = e.pointerId;
       startX = e.clientX;
       startY = e.clientY;
@@ -829,11 +993,30 @@
       if (!dragging || e.pointerId !== pointerId) return;
       dx = e.clientX - startX;
       dy = e.clientY - startY;
-      if (Math.abs(dx) > CONFIG.tapMaxMove || Math.abs(dy) > CONFIG.tapMaxMove) moved = true;
-      const rot = dx / 22;
-      card.style.transform =
-        'translate3d(' + dx + 'px, ' + (dy * 0.35) + 'px, 0) rotate(' + rot + 'deg)';
-      paintCardFeedback(card, dx, threshold());
+      const absX = Math.abs(dx);
+      const absY = Math.abs(dy);
+      if (absX > CONFIG.tapMaxMove || absY > CONFIG.tapMaxMove) moved = true;
+
+      // As kiezen zodra de beweging groot genoeg is en één richting duidelijk
+      // wint. Een schuine haal doet dus niets tot hij zich uitspreekt.
+      if (!axis && (absX > CONFIG.axisDecideAt || absY > CONFIG.axisDecideAt)) {
+        if (absX >= absY * CONFIG.axisRatio) axis = 'x';
+        else if (absY >= absX * CONFIG.axisRatio) axis = 'y';
+      }
+      if (!axis) return;
+
+      if (axis === 'x') {
+        const rot = dx / 22;
+        card.style.transform =
+          'translate3d(' + dx + 'px, ' + (dy * 0.2) + 'px, 0) rotate(' + rot + 'deg)';
+        paintCardFeedback(card, dx, threshold());
+      } else {
+        // Verticaal is puur bladeren: geen kleur, geen stempel, want er
+        // verandert niets aan de status van dit artikel.
+        const damped = dy * 0.55;
+        card.style.transform = 'translate3d(0, ' + damped + 'px, 0) scale(0.985)';
+        resetCardFeedback(card);
+      }
     }
 
     function onUp(e) {
@@ -843,16 +1026,36 @@
       try { card.releasePointerCapture(pointerId); } catch (err) { /* niet kritiek */ }
 
       const elapsed = Math.max(1, performance.now() - startTime);
+
+      if (!moved && elapsed < CONFIG.tapMaxTime) {
+        springBack(card);
+        const item = currentItem();
+        if (item) openDetail(item, 'feed');
+        return;
+      }
+
+      if (axis === 'y') {
+        const snelheid = Math.abs(dy) / elapsed;
+        const bladeren = Math.abs(dy) >= browseThreshold() ||
+          (snelheid >= CONFIG.browseVelocity && Math.abs(dy) > 40);
+        // omhoog vegen = volgende, zoals bij een verticale tijdlijn
+        if (bladeren && browseBy(dy < 0 ? 1 : -1)) return;
+        springBack(card);
+        return;
+      }
+
+      // Geen as gekozen betekent dat het gebaar te schuin was om te weten
+      // wat de bedoeling was. Dan gebeurt er niets: liever een veeg die niet
+      // aankomt dan een artikel dat ten onrechte wordt bewaard of weggegooid.
+      if (axis !== 'x') {
+        springBack(card);
+        return;
+      }
+
       const velocity = Math.abs(dx) / elapsed;
       const committed = Math.abs(dx) >= threshold() ||
         (velocity >= CONFIG.swipeVelocity && Math.abs(dx) > 40);
 
-      if (!moved && elapsed < CONFIG.tapMaxTime) {
-        springBack(card);
-        const item = state.queue[0];
-        if (item) openDetail(item, 'feed');
-        return;
-      }
       if (committed) swipeTop(dx > 0 ? 'right' : 'left');
       else springBack(card);
     }
@@ -873,7 +1076,7 @@
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();
-        const item = state.queue[0];
+        const item = currentItem();
         if (item) openDetail(item, 'feed');
       }
     });
@@ -888,7 +1091,7 @@
 
   function swipeTop(direction) {
     if (state.busy) return;
-    const item = state.queue[0];
+    const item = currentItem();
     if (!item) return;
     const card = el.deck.querySelector('.card--top');
     state.busy = true;
@@ -904,7 +1107,8 @@
       setTimeout(() => card.remove(), 360);
     }
 
-    state.queue.shift();
+    state.queue.splice(state.cursor, 1);
+    clampCursor();
     if (direction === 'right') applySave(item);
     else applyDismiss(item);
 
@@ -925,12 +1129,22 @@
       storage.set(KEYS.saved, state.saved);
     }
     state.dismissed.delete(item.id);
+    storage.set(KEYS.dismissed, dismissedAsList());
     updateSavedBadge();
   }
 
+  /** De weggeswipete items als lijst, klaar voor opslag en synchronisatie. */
+  function dismissedAsList() {
+    return Array.from(state.dismissed.values());
+  }
+
   function applyDismiss(item) {
-    state.dismissed.add(item.id);
-    storage.set(KEYS.dismissed, Array.from(state.dismissed));
+    // Het volledige item bewaren, niet enkel het id: over een paar weken wil
+    // je kunnen zien wélke bron veel niet-leuke content oplevert.
+    state.dismissed.set(item.id, Object.assign({}, item, {
+      dismissedAt: new Date().toISOString()
+    }));
+    storage.set(KEYS.dismissed, dismissedAsList());
   }
 
   function undoLast() {
@@ -945,11 +1159,14 @@
       updateSavedBadge();
     } else {
       state.dismissed.delete(item.id);
-      storage.set(KEYS.dismissed, Array.from(state.dismissed));
+      storage.set(KEYS.dismissed, dismissedAsList());
     }
 
-    // alleen terugleggen als de categorie nog gevolgd wordt
-    if (state.followed.has(item.category)) state.queue.unshift(item);
+    // alleen terugleggen als de categorie nog gevolgd wordt, en wel op de
+    // plek waar je nu staat zodat je hem meteen weer voor je hebt
+    if (state.followed.has(item.category)) {
+      state.queue.splice(state.cursor, 0, item);
+    }
 
     state.lastAction = null;
     storage.remove(KEYS.lastAction);
@@ -961,16 +1178,13 @@
   }
 
   function rebuildFeed() {
-    const top = state.queue[0];
+    const top = currentItem();
     buildQueue();
     // laat dezelfde kaart bovenop staan als die nog in de feed hoort
     if (top && state.followed.has(top.category) &&
         !state.dismissed.has(top.id) && !state.savedIds.has(top.id)) {
       const idx = state.queue.findIndex((i) => i.id === top.id);
-      if (idx > 0) {
-        state.queue.splice(idx, 1);
-        state.queue.unshift(top);
-      }
+      if (idx > -1) state.cursor = idx;
     }
     el.deck.textContent = '';
     renderDeck();
@@ -1329,6 +1543,21 @@
 
     bindSyncEvents();
 
+    // Scrollen over de stapel bladert; de rem voorkomt dat één trackpadveeg
+    // door tien artikelen heen schiet.
+    let wheelKlaarOm = 0;
+    el.deck.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) < CONFIG.wheelThreshold) return;
+      e.preventDefault();
+      const nu = performance.now();
+      if (nu < wheelKlaarOm) return;
+      wheelKlaarOm = nu + CONFIG.wheelCooldownMs;
+      browseBy(e.deltaY > 0 ? 1 : -1);
+    }, { passive: false });
+
+    if (el.btnPrev) el.btnPrev.addEventListener('click', () => browseBy(-1));
+    if (el.btnNext) el.btnNext.addEventListener('click', () => browseBy(1));
+
     el.btnSkip.addEventListener('click', () => swipeTop('left'));
     el.btnSave.addEventListener('click', () => swipeTop('right'));
     el.btnUndo.addEventListener('click', undoLast);
@@ -1370,6 +1599,9 @@
       if (typing) return;
       if (e.key === 'ArrowLeft') { e.preventDefault(); swipeTop('left'); }
       else if (e.key === 'ArrowRight') { e.preventDefault(); swipeTop('right'); }
+      // omhoog/omlaag bladert alleen, zonder iets op te slaan of weg te gooien
+      else if (e.key === 'ArrowDown') { e.preventDefault(); browseBy(1); }
+      else if (e.key === 'ArrowUp') { e.preventDefault(); browseBy(-1); }
       else if (e.key.toLowerCase() === 'z') { e.preventDefault(); undoLast(); }
     });
   }
@@ -1386,7 +1618,7 @@
       storage.get(KEYS.onboarded, false)
     ]);
 
-    state.dismissed = new Set(Array.isArray(dismissed) ? dismissed : []);
+    state.dismissed = toDismissedMap(dismissed);
     state.saved = Array.isArray(saved) ? saved : [];
     state.savedIds = new Set(state.saved.map((i) => i.id));
     state.lastAction = (lastAction && lastAction.item) ? lastAction : null;

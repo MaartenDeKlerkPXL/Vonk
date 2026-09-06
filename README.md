@@ -24,11 +24,20 @@ events, dus zowel met touch als met muis-drag. Tijdens het slepen schalen een
 kleur-overlay en een stempel mee met de afstand; de swipe committeert vanaf 30%
 van de kaartbreedte of bij een snelle flick.
 
-- Links = permanent weg (alleen het ID gaat naar de dismissed-lijst)
-- Rechts = bewaren onder de categorie die het item al heeft
-- Undo van één stap, voor zowel overslaan als bewaren
+- **Horizontaal** beslist: rechts = bewaren onder de eigen categorie, links =
+  niet leuk
+- **Verticaal** bladert alleen: omhoog vegen, scrollen of ↑/↓ brengt je naar
+  het volgende of vorige artikel **zonder iets aan de status te wijzigen**
+- Undo van één stap, voor zowel overslaan als bewaren. Bladeren heeft niets om
+  ongedaan te maken en blijft er dus buiten
 - Tik op een kaart opent de volledige tekst; sluiten houdt je plek in de stapel
-- Op desktop ook te bedienen met ← / → / Z
+- Op desktop ook te bedienen met ← / → / ↑ / ↓ / Z
+
+De twee gebaren zitten elkaar niet in de weg: pas als één richting duidelijk
+overheerst (ruim 1,3 keer de andere, na acht pixels beweging) wordt de as
+gekozen, en die blijft daarna vast. Een veeg die te schuin blijft doet niets —
+liever een gebaar dat niet aankomt dan een artikel dat ten onrechte in je
+archief belandt.
 
 **Archief** — Alle bewaarde items, gegroepeerd per categorie, met filterchips,
 zoeken op trefwoord (met highlight in de resultaten) en verwijderen.
@@ -59,7 +68,8 @@ netlify/functions/
   lib/rss.js                   RSS-, RDF- en Atom-parser
   lib/reddit.js                Reddit-specifieke afhandeling
   lib/scrape-vue-kerkrade.js   scraper voor de bioscoopagenda
-  lib/scrape-roda-jc.js        Google News-zoekopdracht
+  lib/google-news.js           Google News-zoekopdrachten
+  lib/f1-calendar.js           racekalender uit de Jolpica-API
   lib/normalize.js             alles naar één item-formaat
   lib/http.js                  fetch met timeout, retry en user-agent
   lib/blobs.js                 namen van de blob-store en sleutels
@@ -89,7 +99,7 @@ zijn:
 
 ### Status
 
-Fase 1, 2 en 3 zijn af.
+Fase 1 tot en met 4 zijn af.
 
 ## De feed (fase 2)
 
@@ -141,11 +151,39 @@ komen terug in de feed.
 
 ## Bronnen
 
-35 bronnen over 15 categorieën. Eén bron hoort bij precies één categorie, dus
+44 bronnen over 23 categorieën. Eén bron hoort bij precies één categorie, dus
 er is geen classificatie nodig.
 
 De categorie-slugs zijn die van fase 1: `leerzaam` (niet `leerzame-artikelen`)
 en `business` (niet `ondernemerschap`), zodat bestaande saves blijven kloppen.
+
+### Nieuw in fase 4
+
+| Categorie | Bron | Status |
+|---|---|---|
+| pxl-nieuws | Google News op `"Hogeschool PXL"` | geen eigen RSS gevonden, zelfde aanpak als Roda JC |
+| the-ginger-one | `buzz.prezly.com/feed.rss`, gefilterd | gedeelde feed van het persbureau; alleen items met "Ginger One" of "Thomas Martens" |
+| nl-hiphop-releases | Google News op `"nieuwe releases" hiphop Nederland` | **vervanger**: 101Barz heeft geen bevestigde RSS (zie hieronder) |
+| f1-kalender | Jolpica-API, `…/current.json` | JSON in plaats van RSS; elke race wordt één item |
+| f1-memes | `r/formuladank` | alleen Reddit, dus dun — bewust geaccepteerd |
+| memes-dev | xkcd, CommitStrip, SMBC, `r/ProgrammerHumor` | de stripfeeds zijn hierheen verhuisd uit de algemene memes |
+| memes-auto | Jalopnik, `r/carmemes` | Jalopnik is autocultuur, geen memesite: het beste alternatief dat ik vond |
+| memes-voetbal | `r/footballmemes` | alleen Reddit, dus dun — bewust geaccepteerd |
+| memes (algemeen) | Bored Panda | vervangt de verhuisde stripfeeds als niet-Reddit-vangnet |
+
+**101Barz.** Ik kon geen werkende RSS bevestigen: op bnnvara.nl staat wel de
+101Barz-sectie met wekelijkse releaselijsten, maar geen feed-URL die ik kon
+verifiëren (en deze bouwomgeving kan geen enkele externe host bereiken).
+Daarom draait de categorie voorlopig op een Google News-zoekopdracht. Vind je
+alsnog een feed, dan is het één regel in `sources.js`.
+
+**De F1-URL heeft `.json` nodig.** Zonder die extensie geeft de Ergast-
+compatibele API XML terug, geen JSON.
+
+**Twee categorieën leunen bewust volledig op Reddit** (`f1-memes`,
+`memes-voetbal`). Reddit weert datacenter-IP's, dus die blijven op Netlify
+waarschijnlijk leeg. De run logt dat per keer als bekend en verwacht in plaats
+van het als fout te behandelen; een test bewaakt dat het bij die twee blijft.
 
 ### Wijzigingen ten opzichte van de bronnenlijst uit het plan
 
@@ -179,6 +217,22 @@ npm run feed:verify
 Dat controleert elke bron één voor één en meldt per bron of er parseerbare RSS
 uit komt en hoeveel items. De exitcode is 1 zodra een categorie geen enkele
 werkende bron overhoudt. Wat rood is, vervang je in `netlify/functions/lib/sources.js`.
+
+## Feed-kwaliteit (fase 4)
+
+Niet-leuke items verdwijnen niet meer. Wie links veegt, bewaart het **volledige
+item** — inclusief `sourceId` en `category` — in de dismissed-lijst. Onder
+Categorieën staat het ingeklapte blok **Feed-kwaliteit** dat per bron telt
+hoeveel je hebt weggeveegd, aflopend gesorteerd, met de categorie erbij.
+
+Het doel is niet om artikelen terug te lezen maar om na een paar weken te zien
+welke feed structureel niets oplevert wat je leuk vindt. Die kan dan uit
+`sources.js`.
+
+Elk item draagt daarom sinds deze fase een `sourceId` (`tc-ai`, `verge-ai`,
+`vb-ai` — niet alleen de categorie `ai-nieuws`). Items die van vóór fase 4 in
+je opslag staan hebben dat veld niet; die vallen in het overzicht onder "bron
+onbekend" en verdwijnen vanzelf uit beeld.
 
 ## Synchroniseren tussen apparaten (fase 3)
 
@@ -224,11 +278,11 @@ actieve projecten; pauzeer er zo nodig een.
 **2. Tabel aanmaken** in de SQL Editor:
 
 ```sql
-create table vonk_sync (
+create table if not exists vonk_sync (
   sync_code text primary key,
-  saved_items jsonb not null default '[]',
-  dismissed_ids jsonb not null default '[]',
-  followed_categories jsonb not null default '[]',
+  saved_items jsonb not null default '[]'::jsonb,
+  dismissed_items jsonb not null default '[]'::jsonb,
+  followed_categories jsonb not null default '[]'::jsonb,
   updated_at timestamptz not null default now()
 );
 
@@ -240,6 +294,29 @@ create policy "anon kan lezen en schrijven met syncode"
   using (true)
   with check (true);
 ```
+
+**Schemawijziging in fase 4.** De kolom heette eerst `dismissed_ids` en bevatte
+alleen ID's; nu is het `dismissed_items` met volledige items. Staat de tabel er
+al in de oude vorm, dan is dit de migratie:
+
+```sql
+alter table vonk_sync rename column dismissed_ids to dismissed_items;
+
+-- bestaande ID's worden items met alleen een id-veld
+update vonk_sync
+set dismissed_items = (
+  select coalesce(jsonb_agg(jsonb_build_object('id', waarde)), '[]'::jsonb)
+  from jsonb_array_elements_text(dismissed_items) as waarde
+)
+where jsonb_typeof(dismissed_items) = 'array'
+  and exists (
+    select 1 from jsonb_array_elements(dismissed_items) e
+    where jsonb_typeof(e) = 'string'
+  );
+```
+
+De client leest beide vormen, dus een rij die nog niet is omgezet blijft
+werken.
 
 **3. Sleutels in Netlify zetten** — Site settings → Environment variables:
 
@@ -296,9 +373,13 @@ npm run feed:local -- --category=memes
 npm run feed:local -- --serve   # ook naar data/feed.json, zodat de frontend het pakt
 ```
 
-`npm test` draait 25 tests zonder netwerk: HTML strippen, snippets afkappen op
+`npm test` draait 33 tests zonder netwerk: HTML strippen, snippets afkappen op
 zinsgrens, afbeelding kiezen, id-stabiliteit tussen twee runs, het maximum per
-categorie, en het gedrag als één bron, een hele categorie of alles faalt.
+categorie, en het gedrag als één bron, een hele categorie of alles faalt. Sinds
+fase 4 ook: elk item draagt een `sourceId` die naar een bestaande bron wijst,
+de gedeelde persbureau-feed houdt alleen de eigen berichten over, de
+F1-kalender komt er in het gedeelde item-formaat uit, en geen enkel artikel
+belandt in twee categorieën tegelijk.
 
 De frontend erbij pakken zonder Netlify:
 

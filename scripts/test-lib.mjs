@@ -10,11 +10,13 @@ import assert from 'node:assert/strict';
 
 import {
   stripHtml, htmlToParagraphs, makeSnippet, pickImage,
-  toIsoDate, stableId, canonicalUrl, normalizeEntry, decodeEntities
+  toIsoDate, stableId, canonicalUrl, normalizeEntry, decodeEntities, matchesSource
 } from '../netlify/functions/lib/normalize.js';
 import { parseFeed } from '../netlify/functions/lib/rss.js';
 import { buildFeed } from '../netlify/functions/lib/build-feed.js';
-import { SOURCES, CATEGORIES, ITEMS_PER_CATEGORY, validateSources } from '../netlify/functions/lib/sources.js';
+import {
+  SOURCES, CATEGORIES, ITEMS_PER_CATEGORY, validateSources, REDDIT_ONLY_CATEGORIES
+} from '../netlify/functions/lib/sources.js';
 
 /* ---------------- fixtures ---------------- */
 
@@ -32,24 +34,26 @@ ${Array.from({ length: count }, (_, i) => `
   </item>`).join('')}
 </channel></rss>`;
 
-const atomXml = (count = 3) => `<?xml version="1.0"?>
+const atomXml = (count = 3, sub = 'test') => `<?xml version="1.0"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-<title>r/test</title>
+<title>r/${sub}</title>
 ${Array.from({ length: count }, (_, i) => `
   <entry>
     <title>[Nieuw] Atom kop ${i}</title>
-    <link rel="alternate" href="https://www.reddit.com/r/test/comments/${i}/"/>
+    <link rel="alternate" href="https://www.reddit.com/r/${sub}/comments/${i}/"/>
     <content type="html">&lt;img src="https://i.redd.it/${i}.png"&gt;&lt;p&gt;Reddit tekst ${i}&lt;/p&gt;</content>
     <updated>2026-09-0${(i % 9) + 1}T10:00:00Z</updated>
   </entry>`).join('')}
 </feed>`;
 
-const googleNewsXml = () => `<?xml version="1.0"?>
+// De zoekopdracht bepaalt de inhoud, zodat drie Google News-bronnen niet
+// toevallig hetzelfde artikel leveren (en de dedupe ze zou opslokken).
+const googleNewsXml = (query = 'roda') => `<?xml version="1.0"?>
 <rss version="2.0"><channel><title>Google News</title>
   <item>
-    <title>Roda JC wint van Cambuur - De Limburger</title>
-    <link>https://news.google.com/rss/articles/abc123</link>
-    <description>&lt;a href="x"&gt;Roda JC wint van Cambuur&lt;/a&gt;&amp;nbsp;&amp;nbsp;De Limburger</description>
+    <title>${query} in het nieuws - De Krant</title>
+    <link>https://news.google.com/rss/articles/${encodeURIComponent(query)}</link>
+    <description>&lt;a href="x"&gt;${query} in het nieuws&lt;/a&gt;&amp;nbsp;&amp;nbsp;De Krant</description>
     <pubDate>Fri, 05 Sep 2026 20:00:00 GMT</pubDate>
   </item>
 </channel></rss>`;
@@ -62,6 +66,57 @@ const vueHtml = () => `<!DOCTYPE html><html><head>
 ]}
 </script></head><body></body></html>`;
 
+const f1Json = () => JSON.stringify({
+  MRData: {
+    RaceTable: {
+      season: '2026',
+      Races: [
+        {
+          season: '2026', round: '1', raceName: 'Bahrain Grand Prix',
+          url: 'https://en.wikipedia.org/wiki/2026_Bahrain_Grand_Prix',
+          date: '2026-03-08', time: '15:00:00Z',
+          Circuit: {
+            circuitName: 'Bahrain International Circuit',
+            Location: { locality: 'Sakhir', country: 'Bahrain' }
+          }
+        },
+        {
+          season: '2026', round: '2', raceName: 'Dutch Grand Prix',
+          url: 'https://en.wikipedia.org/wiki/2026_Dutch_Grand_Prix',
+          date: '2026-08-30',
+          Circuit: {
+            circuitName: 'Circuit Zandvoort',
+            Location: { locality: 'Zandvoort', country: 'Netherlands' }
+          }
+        }
+      ]
+    }
+  }
+});
+
+/** Gedeelde persbureau-feed: twee cliënten door elkaar. */
+const prezlyXml = () => `<?xml version="1.0"?>
+<rss version="2.0"><channel><title>BUZZ</title>
+  <item>
+    <title>The Ginger One pakt podium in Ieper</title>
+    <link>https://buzz.prezly.com/ginger-one-ieper</link>
+    <description>Thomas Martens reed naar het podium.</description>
+    <pubDate>Mon, 01 Sep 2026 09:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Thomas Martens tekent bij nieuw team</title>
+    <link>https://buzz.prezly.com/martens-team</link>
+    <description>De coureur uit Hasselt maakt de overstap.</description>
+    <pubDate>Tue, 02 Sep 2026 09:00:00 GMT</pubDate>
+  </item>
+  <item>
+    <title>Bakkerij opent derde filiaal in Hasselt</title>
+    <link>https://buzz.prezly.com/bakkerij</link>
+    <description>Een heel andere client van hetzelfde persbureau.</description>
+    <pubDate>Wed, 03 Sep 2026 09:00:00 GMT</pubDate>
+  </item>
+</channel></rss>`;
+
 /** Nagebootste fetch die per bron-type het juiste formaat teruggeeft. */
 function makeFakeFetch({ failing = new Set(), itemsPerFeed = 3 } = {}) {
   return async (url) => {
@@ -69,8 +124,16 @@ function makeFakeFetch({ failing = new Set(), itemsPerFeed = 3 } = {}) {
       return { ok: false, status: 500, statusText: 'Server Error', text: async () => '' };
     }
     let body;
-    if (url.includes('news.google.com')) body = googleNewsXml();
-    else if (url.includes('reddit.com')) body = atomXml(itemsPerFeed);
+    if (url.includes('jolpi.ca')) body = f1Json();
+    else if (url.includes('prezly.com')) body = prezlyXml();
+    else if (url.includes('news.google.com')) {
+      const q = new URL(url).searchParams.get('q') || 'nieuws';
+      body = googleNewsXml(q.replace(/["+]/g, ' ').trim());
+    }
+    else if (url.includes('reddit.com')) {
+      const sub = (url.match(/\/r\/([^/]+)\//) || [, 'test'])[1];
+      body = atomXml(itemsPerFeed, sub);
+    }
     else if (url.includes('vuecinemas.nl')) body = vueHtml();
     else body = rssXml(itemsPerFeed, new URL(url).hostname.replace(/\W/g, ''));
     return { ok: true, status: 200, statusText: 'OK', text: async () => body };
@@ -192,8 +255,13 @@ test('sources.js is consistent', () => {
   assert.deepEqual(validateSources(), []);
 });
 
-test('geen enkele categorie leunt uitsluitend op Reddit', () => {
+test('alleen de twee geaccepteerde categorieën leunen op Reddit alleen', () => {
+  // Reddit weert datacenter-IP's, dus een categorie zonder alternatief blijft
+  // op Netlify leeg. Voor f1-memes en voetbalmemes is dat een bewuste keuze
+  // (geen bruikbare niet-Reddit-bron gevonden); de rest moet een vangnet hebben.
+  const bewust = new Set(['f1-memes', 'memes-voetbal']);
   for (const category of CATEGORIES) {
+    if (bewust.has(category.id)) continue;
     const nonReddit = SOURCES.filter((s) => s.category === category.id && s.type !== 'reddit');
     assert.ok(nonReddit.length > 0, category.id + ' heeft alleen Reddit-bronnen');
   }
@@ -209,7 +277,7 @@ test('buildFeed levert een frontend-klaar document', async () => {
 
   assert.ok(doc, 'document is gebouwd');
   assert.equal(report.fatal, false);
-  assert.equal(doc.categories.length, 15);
+  assert.equal(doc.categories.length, CATEGORIES.length);
   assert.ok(doc.items.length > 0);
 
   for (const category of CATEGORIES) {
@@ -313,6 +381,113 @@ test('Roda JC: uitgever uit de kop, fullContent gelijk aan snippet', async () =>
     logger: silentLogger
   });
   const item = doc.items.find((i) => i.category === 'roda-jc');
-  assert.equal(item.headline, 'Roda JC wint van Cambuur');
+  assert.equal(item.headline, 'Roda JC in het nieuws', 'uitgever hoort van de kop af');
   assert.equal(item.fullContent, item.snippet);
+});
+
+
+/* ---------------- fase 4 ---------------- */
+
+test('matchesSource filtert een gedeelde feed op onderwerp', () => {
+  const item = { headline: 'The Ginger One wint', snippet: '', fullContent: '' };
+  const ander = { headline: 'Bakkerij opent filiaal', snippet: '', fullContent: '' };
+  assert.equal(matchesSource(item, ['ginger one', 'thomas martens']), true);
+  assert.equal(matchesSource(ander, ['ginger one', 'thomas martens']), false);
+  assert.equal(matchesSource(ander, []), true, 'zonder zoektermen mag alles door');
+});
+
+test('elk item draagt een sourceId dat naar een bestaande bron wijst', async () => {
+  const { doc } = await buildFeed({
+    fetchOptions: { fetchImpl: makeFakeFetch(), retries: 0 },
+    logger: silentLogger
+  });
+  const bronIds = new Set(SOURCES.map((s) => s.id));
+  for (const item of doc.items) {
+    assert.ok(item.sourceId, 'geen sourceId op ' + item.id);
+    assert.ok(bronIds.has(item.sourceId), 'onbekende sourceId ' + item.sourceId);
+    assert.ok(item.sourceName, 'geen sourceName op ' + item.id);
+    assert.ok(item.id.startsWith(item.sourceId + '-'), 'id hoort met de bron te beginnen: ' + item.id);
+  }
+});
+
+test('The Ginger One houdt alleen de eigen berichten over', async () => {
+  const { doc } = await buildFeed({
+    fetchOptions: { fetchImpl: makeFakeFetch(), retries: 0 },
+    logger: silentLogger
+  });
+  const items = doc.items.filter((i) => i.category === 'the-ginger-one');
+  assert.equal(items.length, 2, 'het bakkerijbericht hoort eruit');
+  for (const item of items) {
+    assert.match(item.headline.toLowerCase(), /ginger one|thomas martens/);
+  }
+});
+
+test('de F1-kalender wordt races in het gedeelde item-formaat', async () => {
+  const { doc } = await buildFeed({
+    fetchOptions: { fetchImpl: makeFakeFetch(), retries: 0 },
+    logger: silentLogger
+  });
+  const races = doc.items.filter((i) => i.category === 'f1-kalender');
+  assert.equal(races.length, 2);
+
+  const zandvoort = races.find((r) => r.headline === 'Grand Prix van Netherlands');
+  assert.ok(zandvoort, 'kop is opgebouwd uit het land');
+  assert.match(zandvoort.snippet, /Circuit Zandvoort/);
+  assert.match(zandvoort.snippet, /Ronde 2/);
+  assert.match(zandvoort.snippet, /30 augustus 2026/);
+  assert.equal(zandvoort.photoUrl, null);
+  assert.match(zandvoort.sourceUrl, /^https:\/\//);
+});
+
+test('races houden hun id als de API een andere url gaat teruggeven', async () => {
+  const eerste = await buildFeed({
+    fetchOptions: { fetchImpl: makeFakeFetch(), retries: 0 }, logger: silentLogger
+  });
+  const anderUrl = makeFakeFetch();
+  const tweede = await buildFeed({
+    fetchOptions: {
+      fetchImpl: async (url) => {
+        if (!url.includes('jolpi.ca')) return anderUrl(url);
+        const doc = JSON.parse(f1Json());
+        doc.MRData.RaceTable.Races.forEach((r) => { r.url = 'https://formula1.com/anders/' + r.round; });
+        return { ok: true, status: 200, statusText: 'OK', text: async () => JSON.stringify(doc) };
+      },
+      retries: 0
+    },
+    logger: silentLogger
+  });
+  const ids = (res) => res.doc.items.filter((i) => i.category === 'f1-kalender').map((i) => i.id).sort();
+  assert.deepEqual(ids(eerste), ids(tweede));
+});
+
+test('geen enkel artikel komt in twee categorieën terecht', async () => {
+  const { doc } = await buildFeed({
+    fetchOptions: { fetchImpl: makeFakeFetch(), retries: 0 },
+    logger: silentLogger
+  });
+  const perUrl = new Map();
+  for (const item of doc.items) {
+    const sleutel = canonicalUrl(item.sourceUrl);
+    if (perUrl.has(sleutel)) {
+      assert.fail('dezelfde url in ' + perUrl.get(sleutel) + ' en ' + item.category + ': ' + sleutel);
+    }
+    perUrl.set(sleutel, item.category);
+  }
+});
+
+test('alleen f1-memes en voetbalmemes leunen volledig op Reddit', () => {
+  assert.deepEqual([...REDDIT_ONLY_CATEGORIES].sort(), ['f1-memes', 'memes-voetbal']);
+});
+
+test('de meme-subcategorieën bestaan en hebben hun eigen bronnen', () => {
+  for (const id of ['memes-dev', 'memes-auto', 'memes-voetbal', 'f1-memes']) {
+    assert.ok(CATEGORIES.some((c) => c.id === id), 'categorie ontbreekt: ' + id);
+    assert.ok(SOURCES.some((s) => s.category === id), 'geen bron voor ' + id);
+  }
+  // de stripfeeds horen nu bij de programmeurmemes
+  for (const id of ['xkcd', 'commitstrip', 'smbc']) {
+    assert.equal(SOURCES.find((s) => s.id === id).category, 'memes-dev');
+  }
+  // en de algemene memes zijn niet leeg achtergebleven
+  assert.ok(SOURCES.some((s) => s.category === 'memes' && s.type !== 'reddit'));
 });

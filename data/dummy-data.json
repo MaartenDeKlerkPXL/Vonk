@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 3,
   "generatedAt": "2026-09-05",
   "source": "dummy",
   "categories": [
@@ -118,7 +118,9 @@
       "fullContent": "Een nieuw open model van 3 miljard parameters draait volgens de makers realtime op middenklasse telefoons uit 2023. De sleutel zit niet in het model zelf maar in de kwantisatie: gewichten worden naar 4 bits teruggebracht met een kalibratieset die per laag verschilt, waardoor het kwaliteitsverlies grotendeels wegvalt.\n\nIn de demo vertaalt het model gesproken tekst, vat het lange artikelen samen en beantwoordt het vragen over documenten die lokaal op het toestel staan. Er gaat geen byte naar een server. Voor mensen die privacygevoelig werk doen is dat het belangrijkste verschil met de bestaande assistenten.\n\nDe praktische beperking blijft geheugen. Op toestellen met 6 GB RAM moet het model bij het wisselen van app opnieuw geladen worden, wat een paar seconden kost. De ontwikkelaars werken aan een gedeeld geheugensegment zodat het model warm blijft.",
       "photoUrl": "https://picsum.photos/seed/vonk-ai-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/ai/lokaal-model-telefoon",
-      "publishedAt": "2026-09-04"
+      "publishedAt": "2026-09-04",
+      "sourceId": "dummy-ai-nieuws",
+      "sourceName": "Voorbeelddata: AI-nieuws"
     },
     {
       "id": "ai-002",
@@ -128,7 +130,9 @@
       "fullContent": "De eerste handhavingszaak onder de AI-verordening is afgerond. Een recruitmentplatform rangschikte sollicitanten met een model dat op historische aannamedata was getraind, zonder dat kandidaten konden achterhalen welke factoren meewogen.\n\nInteressanter dan de boete is de motivering. De toezichthouder beschrijft precies welke documentatie wel had volstaan: een register van trainingsdata-herkomst, een meetbare foutmarge per demografische groep, en een uitlegmechanisme dat per kandidaat de drie zwaarst wegende kenmerken toont.\n\nVoor bouwers van kleinere systemen is dat de bruikbare uitkomst. Het besluit maakt duidelijk dat volledige interpreteerbaarheid niet vereist is, maar reproduceerbare verantwoording wel.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/ai/eerste-boete-ai-verordening",
-      "publishedAt": "2026-09-02"
+      "publishedAt": "2026-09-02",
+      "sourceId": "dummy-ai-nieuws",
+      "sourceName": "Voorbeelddata: AI-nieuws"
     },
     {
       "id": "ai-003",
@@ -138,7 +142,9 @@
       "fullContent": "Een vergelijkende studie over acht modellen laat zien dat de nauwkeurigheid op feiten die in het midden van een lang contextvenster staan aanzienlijk daalt zodra de context boven de 200.000 tokens komt. Het effect is bekend, maar de studie kwantificeert het per model.\n\nDe onderzoekers vergeleken drie strategieën: alles in de context proppen, klassieke retrieval met korte fragmenten, en een hybride waarbij een goedkoop model eerst samenvat. De hybride won op zowel kosten als nauwkeurigheid, met een marge die groter werd naarmate de brontekst groeide.\n\nDe conclusie is nuchter: een groter venster is een gemak voor de ontwikkelaar, geen kwaliteitsgarantie. Wie nauwkeurigheid nodig heeft, blijft beter selecteren wat erin gaat.",
       "photoUrl": "https://picsum.photos/seed/vonk-ai-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/ai/lange-context-onderzoek",
-      "publishedAt": "2026-08-30"
+      "publishedAt": "2026-08-30",
+      "sourceId": "dummy-ai-nieuws",
+      "sourceName": "Voorbeelddata: AI-nieuws"
     },
     {
       "id": "ai-004",
@@ -148,7 +154,9 @@
       "fullContent": "Een nieuw open stemmodel heeft dertig seconden bronmateriaal nodig om een stem overtuigend na te bootsen, inclusief intonatiepatronen die bij vertaling naar een andere taal behouden blijven. Waar eerdere modellen een vlakke, robotachtige cadans opleverden, blijft hier het ritme van de oorspronkelijke spreker herkenbaar.\n\nDe licentie is opvallend. Commercieel gebruik is toegestaan, maar alleen met een ondertekende toestemmingsverklaring van de spreker, die als metadata in het uitvoerbestand wordt meegeleverd. Zonder die metadata weigert de referentie-implementatie te exporteren.\n\nKleine studio's die eerder duizenden euro's per aflevering kwijt waren aan nasynchronisatie melden dat de kosten met een factor tien dalen. De discussie over stemacteurs die daardoor werk verliezen is daarmee niet opgelost.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/ai/open-stemmodel",
-      "publishedAt": "2026-08-28"
+      "publishedAt": "2026-08-28",
+      "sourceId": "dummy-ai-nieuws",
+      "sourceName": "Voorbeelddata: AI-nieuws"
     },
     {
       "id": "eten-001",
@@ -158,7 +166,9 @@
       "fullContent": "Verwarm de oven voor op 220 graden. Kiep 500 gram verse gnocchi op een bakplaat samen met 400 gram cherrytomaten, vier ongepelde tenen knoflook, drie eetlepels olijfolie, zout en peper. Niet voorkoken: de gnocchi gaan rauw de oven in en krijgen daardoor een krokante buitenkant.\n\nNa 25 minuten zijn de tomaten gebarsten en de gnocchi goudbruin. Knijp de knoflook uit zijn velletje, prak hem door de tomaten en schep alles om zodat er een dikke saus ontstaat.\n\nScheur er een bol burrata over en werk af met basilicum en een royale draai zwarte peper. Wie het pittiger wil, voegt bij het omscheppen een halve theelepel chilivlokken toe.",
       "photoUrl": "https://picsum.photos/seed/vonk-eten-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/recepten/gnocchi-oven",
-      "publishedAt": "2026-09-03"
+      "publishedAt": "2026-09-03",
+      "sourceId": "dummy-gerechten",
+      "sourceName": "Voorbeelddata: Simpele gerechten"
     },
     {
       "id": "eten-002",
@@ -168,7 +178,9 @@
       "fullContent": "Klop drie eieren los met een snuf zout en een halve theelepel suiker. Bak ze op laag vuur in een klont boter tot ze net gestold zijn maar nog glanzen; van het vuur af garen ze nog even door.\n\nRooster twee dikke sneden wit brood en besmeer beide kanten met mayonaise. Leg het roerei erop, voeg een plak kaas toe zodat die smelt tegen het warme ei, en werk af met een streep sriracha of ketchup.\n\nDe suiker is niet optioneel: die zorgt voor het zoet-hartige contrast dat het gerecht in Seoul tot ontbijtklassieker maakte. Snijd de sandwich diagonaal, anders valt hij uit elkaar.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/recepten/koreaanse-eiersandwich",
-      "publishedAt": "2026-09-01"
+      "publishedAt": "2026-09-01",
+      "sourceId": "dummy-gerechten",
+      "sourceName": "Voorbeelddata: Simpele gerechten"
     },
     {
       "id": "eten-003",
@@ -178,7 +190,9 @@
       "fullContent": "Verhit vier eetlepels olijfolie in een pan op middelhoog vuur en bak acht salieblaadjes tot ze krokant zijn. Schep ze eruit en laat ze uitlekken op keukenpapier.\n\nBak in dezelfde olie twee fijngesneden tenen knoflook een halve minuut, voeg een uitgelekt blik witte bonen toe met vier eetlepels van het bonenvocht. Prak een derde van de bonen fijn zodat de saus bindt en laat tien minuten zachtjes pruttelen.\n\nBreng op smaak met de rasp van een halve citroen, een scheut citroensap, zout en veel zwarte peper. Serveer met de krokante salie erover en geroosterd zuurdesembrood ernaast.",
       "photoUrl": "https://picsum.photos/seed/vonk-eten-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/recepten/witte-bonen-salie",
-      "publishedAt": "2026-08-29"
+      "publishedAt": "2026-08-29",
+      "sourceId": "dummy-gerechten",
+      "sourceName": "Voorbeelddata: Simpele gerechten"
     },
     {
       "id": "eten-004",
@@ -188,7 +202,9 @@
       "fullContent": "Roer drie eetlepels pindakaas los met twee eetlepels sojasaus, een eetlepel rijstazijn, een theelepel suiker en vier eetlepels heet water. Blijf roeren; de saus schift eerst en wordt daarna glad en glanzend.\n\nKook 200 gram noedels volgens de verpakking en spoel ze kort koud af zodat ze niet doorgaren. Meng ze door de saus terwijl die nog lauwwarm is.\n\nAfwerken met lente-ui, geroosterde pinda's en komkommerreepjes. Een halve theelepel chiliolie of een scheutje sesamolie maakt het compleet. Koud de volgende dag is het net zo goed.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/recepten/noedels-pindasaus",
-      "publishedAt": "2026-08-26"
+      "publishedAt": "2026-08-26",
+      "sourceId": "dummy-gerechten",
+      "sourceName": "Voorbeelddata: Simpele gerechten"
     },
     {
       "id": "inno-001",
@@ -198,7 +214,9 @@
       "fullContent": "Het principe is simpel: je duwt je fiets tot tegen een aanslag, houdt een pasje voor de lezer en een mechanische arm trekt het frame een verticale schacht in. Dertien seconden later staat de fiets elf meter onder de grond in een cilindrische stalling met plek voor 200 fietsen.\n\nDe winst zit in oppervlakte. Waar een gewone stalling voor 200 fietsen ruim 300 vierkante meter straat inneemt, heeft dit systeem een luik van drie bij drie meter nodig. Voor binnensteden waar elke meter stoep betwist wordt, is dat het hele verhaal.\n\nDe eerste Europese proefopstelling komt bij een station te staan. Het grootste bezwaar is voorspelbaar: als de mechaniek stilvalt, staat niemand meer bij zijn fiets. De leverancier belooft een handmatige noodprocedure die per fiets ongeveer een minuut kost.",
       "photoUrl": "https://picsum.photos/seed/vonk-inno-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/innovatie/ondergrondse-fietsenstalling",
-      "publishedAt": "2026-09-04"
+      "publishedAt": "2026-09-04",
+      "sourceId": "dummy-innovatief",
+      "sourceName": "Voorbeelddata: Innovatief"
     },
     {
       "id": "inno-002",
@@ -208,7 +226,9 @@
       "fullContent": "Onderzoekers ontwikkelden een verf met microscopische holtes van precies afgestemde grootte. Die weerkaatsen bijna al het zonlicht en stralen tegelijk warmte uit op een golflengte waarvoor de atmosfeer transparant is, zodat de energie letterlijk de ruimte in verdwijnt.\n\nIn veldproeven bleef een behandeld dak overdag tot vier graden koeler dan de omgevingslucht, zonder enige stroomtoevoer. Op een plat industriedak vertaalde dat zich naar een daling van bijna een vijfde in het koelverbruik.\n\nDe beperking is vervuiling. Zodra er stof en algen op de laag komen, zakt het effect merkbaar. Het onderzoeksteam werkt aan een hydrofobe toplaag die met regen zelfreinigend zou moeten zijn.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/innovatie/koelende-verf",
-      "publishedAt": "2026-09-01"
+      "publishedAt": "2026-09-01",
+      "sourceId": "dummy-innovatief",
+      "sourceName": "Voorbeelddata: Innovatief"
     },
     {
       "id": "inno-003",
@@ -218,7 +238,9 @@
       "fullContent": "Open koelmeubels zijn energetisch onzin, maar deuren kosten omzet: klanten pakken meetbaar minder als ze eerst iets moeten openen. Een keten zocht een middenweg en vond die onderin.\n\nIn plaats van koude lucht van boven naar beneden te blazen, koelt het systeem de vloerplaat onder het schap. Koude lucht zakt vanzelf en blijft in een laag hangen, waardoor het luchtgordijn veel minder hard hoeft te werken.\n\nIn de eerste twee filialen daalde het koelverbruik met ongeveer een kwart, bij gelijkblijvende producttemperatuur. De ombouw verdient zich volgens de keten in vier jaar terug, korter als de energieprijzen weer stijgen.",
       "photoUrl": "https://picsum.photos/seed/vonk-inno-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/innovatie/supermarkt-koeling",
-      "publishedAt": "2026-08-27"
+      "publishedAt": "2026-08-27",
+      "sourceId": "dummy-innovatief",
+      "sourceName": "Voorbeelddata: Innovatief"
     },
     {
       "id": "inno-004",
@@ -228,7 +250,9 @@
       "fullContent": "Een Nederlandse start-up perst gebroken sloopbeton tot blokken met een geometrisch profiel dat in elkaar grijpt, zoals bouwstenen van speelgoed. Er komt geen mortel aan te pas; de stabiliteit komt uit de vorm en het eigen gewicht.\n\nDe praktische winst zit in tijd en demontage. Een testmuur van vier bij drie meter stond binnen twee uur overeind met twee man. Belangrijker: dezelfde muur is later weer uit elkaar te halen zonder dat de blokken beschadigen, waardoor ze een tweede leven krijgen.\n\nVoor dragende constructies is het systeem nog niet gecertificeerd. De eerste toepassingen zijn tuinmuren, keerwanden en tijdelijke scheidingswanden op bouwplaatsen.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/innovatie/stapelblokken-beton",
-      "publishedAt": "2026-08-24"
+      "publishedAt": "2026-08-24",
+      "sourceId": "dummy-innovatief",
+      "sourceName": "Voorbeelddata: Innovatief"
     },
     {
       "id": "meme-001",
@@ -238,7 +262,9 @@
       "fullContent": "Deel 1: Het werkt. De ontwikkelaar sluit de laptop met het rustige gevoel van iemand die klaar is.\n\nDeel 2: Het werkt niet bij de collega. Er volgt een uur van versienummers vergelijken, waarna blijkt dat er ergens een omgevingsvariabele staat die alleen op één machine bestaat en die niemand ooit heeft opgeschreven.\n\nDeel 3: Alles gaat in een container. Het werkt weer. Niemand durft nog te vragen wat er precies in die container zit, en zo blijft het tot iemand over drie jaar de basis-image moet updaten.",
       "photoUrl": "https://picsum.photos/seed/vonk-meme-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/memes/works-on-my-machine",
-      "publishedAt": "2026-09-05"
+      "publishedAt": "2026-09-05",
+      "sourceId": "dummy-memes",
+      "sourceName": "Voorbeelddata: Memes"
     },
     {
       "id": "meme-002",
@@ -248,7 +274,9 @@
       "fullContent": "Tab 3 is een recept dat je in maart opende en dat sindsdien wacht op een avond die nooit komt.\n\nTab 22 is een tutorial van veertig minuten die je ging kijken zodra je tijd had. Je hebt sindsdien elf uur aan korte video's gekeken.\n\nTab 47 weet je niet meer. Hij is geladen vanuit een sessieherstel na een crash en heeft inmiddels de status van huisdier. Sluiten voelt als iets opgeven, dus blijft hij staan.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/memes/47-tabbladen",
-      "publishedAt": "2026-09-03"
+      "publishedAt": "2026-09-03",
+      "sourceId": "dummy-memes",
+      "sourceName": "Voorbeelddata: Memes"
     },
     {
       "id": "meme-003",
@@ -258,7 +286,9 @@
       "fullContent": "10:00 — Dagelijkse stand-up. Vijftien minuten, gepland. Duurt veertig.\n\n11:00 — Afstemming over de stand-up, omdat er dingen naar voren kwamen die 'even apart' moesten.\n\n14:00 — Evaluatie waarom de planning niet gehaald is. Uitkomst: te weinig focustijd. Actiepunt: een wekelijkse focus-overleg inplannen om dat te bewaken.",
       "photoUrl": "https://picsum.photos/seed/vonk-meme-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/memes/vergaderkalender",
-      "publishedAt": "2026-08-31"
+      "publishedAt": "2026-08-31",
+      "sourceId": "dummy-memes",
+      "sourceName": "Voorbeelddata: Memes"
     },
     {
       "id": "meme-004",
@@ -268,7 +298,9 @@
       "fullContent": "Precies op het moment dat het licht uitgaat, opent het archief. Ongesorteerd en zonder zoekfunctie, maar met een verbazingwekkend goede indexering van pijnlijke momenten.\n\nEerst iets onschuldigs: een liedje uit 2011 dat je al twaalf jaar niet hoorde. Daarna een zin die je in groep 6 verkeerd uitsprak, compleet met de reactie van de klas.\n\nOm kwart over één komt de finale: het idee voor iets goeds, precies helder genoeg om je wakker te houden en precies vaag genoeg om 's ochtends verdwenen te zijn.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/memes/hersenen-om-middernacht",
-      "publishedAt": "2026-08-25"
+      "publishedAt": "2026-08-25",
+      "sourceId": "dummy-memes",
+      "sourceName": "Voorbeelddata: Memes"
     },
     {
       "id": "leer-001",
@@ -278,7 +310,9 @@
       "fullContent": "Mensen schatten de duur van hun eigen taken structureel te laag in, ook als ze weten dat ze dat doen. Dat effect, de planningsfout, verdwijnt niet door beter je best te doen: het komt voort uit het feit dat je bij het plannen naar je plan kijkt in plaats van naar de werkelijkheid.\n\nHet tegengif heet de buitenblik. In plaats van je taak op te delen en de onderdelen op te tellen, zoek je vergelijkbare projecten uit het verleden en gebruik je hun werkelijke doorlooptijd als startpunt. Dat voelt ongemakkelijk, omdat je eigen geval altijd bijzonder lijkt.\n\nIn de praktijk werkt een simpele regel verrassend goed: neem je eigen schatting en vermenigvuldig die met de factor waarmee je vorige drie schattingen ernaast zaten. Wie dat een half jaar bijhoudt, schat merkbaar nauwkeuriger.",
       "photoUrl": "https://picsum.photos/seed/vonk-leer-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/leren/planningsfout",
-      "publishedAt": "2026-09-02"
+      "publishedAt": "2026-09-02",
+      "sourceId": "dummy-leerzaam",
+      "sourceName": "Voorbeelddata: Leerzame artikelen"
     },
     {
       "id": "leer-002",
@@ -288,7 +322,9 @@
       "fullContent": "Tot ver in de negentiende eeuw had elke stad zijn eigen tijd, bepaald door het moment waarop de zon op zijn hoogst stond. Tussen twee steden op honderd kilometer afstand zat al snel enkele minuten verschil, wat voor voetgangers en koetsen niemand stoorde.\n\nDe trein maakte het onhoudbaar. Een dienstregeling die in de ene stad klopte, liep in de volgende naast de werkelijkheid, met bijna-botsingen op enkelsporige trajecten als gevolg. Spoorwegmaatschappijen begonnen daarom hun eigen uniforme tijd te hanteren, los van wat de kerktoren aangaf.\n\nOverheden volgden pas jaren later. De standaardtijd is daarmee een zeldzaam voorbeeld van infrastructuur die eerst door bedrijven werd afgedwongen en pas achteraf wettelijk werd vastgelegd.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/leren/standaardtijd-spoorwegen",
-      "publishedAt": "2026-08-30"
+      "publishedAt": "2026-08-30",
+      "sourceId": "dummy-leerzaam",
+      "sourceName": "Voorbeelddata: Leerzame artikelen"
     },
     {
       "id": "leer-003",
@@ -298,7 +334,9 @@
       "fullContent": "Het gemiddelde is gevoelig voor uitschieters, de mediaan niet. Bij verdelingen met een lange staart, en dat zijn vrijwel alle verdelingen die met geld te maken hebben, ligt het gemiddelde daardoor structureel hoger dan wat een typisch persoon ervaart.\n\nEen concreet voorbeeld: in een bedrijf met negen medewerkers die 3.000 euro verdienen en één directeur die 30.000 verdient, is het gemiddelde salaris 5.700 euro. De mediaan is 3.000 euro. Beide getallen zijn correct, maar alleen het tweede beschrijft wat de meeste mensen krijgen.\n\nDe praktische les: wanneer een bericht een gemiddelde noemt bij inkomens, huizenprijzen of wachttijden, is de eerste vraag wat de mediaan is. Ontbreekt die, dan is het de moeite waard te vragen waarom.",
       "photoUrl": "https://picsum.photos/seed/vonk-leer-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/leren/mediaan-gemiddelde",
-      "publishedAt": "2026-08-28"
+      "publishedAt": "2026-08-28",
+      "sourceId": "dummy-leerzaam",
+      "sourceName": "Voorbeelddata: Leerzame artikelen"
     },
     {
       "id": "leer-004",
@@ -308,7 +346,9 @@
       "fullContent": "Bij het leren van een taal is het aantal betekenisvolle herhalingen belangrijker dan de correctheid ervan. Wie wacht tot een zin foutloos is voordat hij hem uitspreekt, produceert per uur veel minder taal en leert daardoor langzamer.\n\nStudies naar tweedetaalverwerving laten consistent zien dat leerlingen die vroeg in gesprek gaan, ondanks een hogere foutfrequentie, na een jaar vloeiender spreken dan leerlingen die eerst de grammatica afmaakten. De correctheid haalt zichzelf grotendeels in via feedback in het gesprek.\n\nDe praktische vertaling is ongemakkelijk maar duidelijk: zoek situaties op waarin je moet spreken voordat je klaar bent. Twintig minuten stuntelen levert meer op dan een uur foutloos invuloefeningen maken.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/leren/taal-leren-fouten",
-      "publishedAt": "2026-08-23"
+      "publishedAt": "2026-08-23",
+      "sourceId": "dummy-leerzaam",
+      "sourceName": "Voorbeelddata: Leerzame artikelen"
     },
     {
       "id": "roda-001",
@@ -318,7 +358,9 @@
       "fullContent": "Roda JC heeft in eigen huis met 2-1 gewonnen van Cambuur. De ploeg kwam na een half uur op achterstand na een counter over rechts, maar bleef rustig voetballen en kreeg voor rust al twee goede mogelijkheden.\n\nDe gelijkmaker viel kort na de onderbreking uit een lage voorzet vanaf links. Daarna golfde de wedstrijd op en neer, met kansen aan beide kanten en een doelman die Roda twee keer overeind hield.\n\nVier minuten voor tijd viel de beslissing uit een hoekschop: een kopbal bij de tweede paal, binnengelopen door de invaller die een kwartier eerder was ingebracht. Door de zege klimt Roda naar de bovenste helft van de ranglijst.",
       "photoUrl": "https://picsum.photos/seed/vonk-roda-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/roda/roda-cambuur-2-1",
-      "publishedAt": "2026-09-05"
+      "publishedAt": "2026-09-05",
+      "sourceId": "dummy-roda-jc",
+      "sourceName": "Voorbeelddata: Roda JC"
     },
     {
       "id": "roda-002",
@@ -328,7 +370,9 @@
       "fullContent": "Een achttienjarige middenvelder uit de eigen jeugdopleiding heeft zijn eerste profcontract getekend, met een looptijd tot medio 2029. Hij speelde vorig seizoen al mee in de beker en maakte in de voorbereiding indruk als controlerende middenvelder.\n\nDe technisch directeur noemt de verlenging een bevestiging van de koers: de club wil het aandeel spelers uit de eigen opleiding in de selectie verder vergroten, deels uit overtuiging en deels uit financiële noodzaak.\n\nDe speler zelf zegt in Kerkrade te willen doorbreken voordat hij aan een stap denkt. Hij traint sinds de zomer volledig mee met de hoofdmacht.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/roda/eerste-profcontract",
-      "publishedAt": "2026-09-02"
+      "publishedAt": "2026-09-02",
+      "sourceId": "dummy-roda-jc",
+      "sourceName": "Voorbeelddata: Roda JC"
     },
     {
       "id": "roda-003",
@@ -338,7 +382,9 @@
       "fullContent": "Tijdens de winterstop wordt de veldverlichting van Parkstad Limburg Stadion vervangen door led-armaturen. Naast een lager energieverbruik levert dat een gelijkmatiger lichtbeeld op, wat voor televisieopnames en voor de spelers zelf verschil maakt.\n\nDe oosttribune krijgt bovendien nieuwe stoelen. De capaciteit blijft gelijk; het gaat om vervanging van stoelen die uit de bouwperiode stammen en waarvan de kunststof bros is geworden.\n\nDe werkzaamheden zijn gepland tussen de laatste thuiswedstrijd van december en de eerste van eind januari. Volgens de club hoeft er geen wedstrijd voor verplaatst te worden.",
       "photoUrl": "https://picsum.photos/seed/vonk-roda-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/roda/stadion-renovatie",
-      "publishedAt": "2026-08-29"
+      "publishedAt": "2026-08-29",
+      "sourceId": "dummy-roda-jc",
+      "sourceName": "Voorbeelddata: Roda JC"
     },
     {
       "id": "roda-004",
@@ -348,7 +394,9 @@
       "fullContent": "De supportersvereniging legt voor de eerstvolgende uitwedstrijd twee bussen in, die twee en een half uur voor aanvang vertrekken vanaf de parkeerplaats bij het stadion. Voor leden kost het pakket met kaart en vervoer 25 euro, niet-leden betalen vijf euro meer.\n\nDe vereniging vraagt supporters zich uiterlijk drie dagen voor de wedstrijd aan te melden, zodat het aantal bussen op tijd kan worden bijgesteld. Bij te weinig aanmeldingen rijdt er één bus.\n\nEr geldt een alcoholverbod in de bus, ingevoerd na afspraken met de gemeente van de tegenstander. De vereniging benadrukt dat de afspraak nodig was om het uitvak open te houden.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/roda/bustocht-uitwedstrijd",
-      "publishedAt": "2026-08-26"
+      "publishedAt": "2026-08-26",
+      "sourceId": "dummy-roda-jc",
+      "sourceName": "Voorbeelddata: Roda JC"
     },
     {
       "id": "vue-001",
@@ -358,7 +406,9 @@
       "fullContent": "Vanaf donderdag draait in Vue Kerkrade een sciencefictiondrama over de derde generatie aan boord van een kolonieschip dat over veertig jaar zijn bestemming bereikt. De film is opvallend rustig van tempo en leunt meer op gesprekken dan op effecten.\n\nDe recensies zijn verdeeld: wie een ruimteavontuur verwacht komt bedrogen uit, wie van langzaam opgebouwde spanning houdt krijgt waar voor zijn geld. De filmmuziek en het geluidsontwerp worden breed geprezen, wat pleit voor een grote zaal.\n\nSpeeltijden: donderdag tot en met woensdag, dagelijks om 15:45, 19:00 en 21:45. De avondvoorstelling van zaterdag is in de grote zaal met versterkt geluid.",
       "photoUrl": "https://picsum.photos/seed/vonk-vue-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/vue/scifi-generatieschip",
-      "publishedAt": "2026-09-04"
+      "publishedAt": "2026-09-04",
+      "sourceId": "dummy-vue-kerkrade",
+      "sourceName": "Voorbeelddata: Vue Kerkrade"
     },
     {
       "id": "vue-002",
@@ -368,7 +418,9 @@
       "fullContent": "Volgende week dinsdag draait Vue Kerkrade eenmalig een gerestaureerde versie van een sciencefictionklassieker uit 1968, in een nieuwe scan van het originele negatief. De vertoning begint om 20:00 met een inleiding van een kwartier.\n\nDe restauratie is vooral op geluid indrukwekkend: de originele meersporenmix is opnieuw uitgemengd, waardoor de orkestpassages ruimte krijgen die op thuisapparatuur nooit hoorbaar was.\n\nKaarten kosten 12,50 euro. Er is één zaal beschikbaar en de ervaring van eerdere klassiekeravonden leert dat die halverwege de week uitverkocht raakt.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/vue/klassiekeravond",
-      "publishedAt": "2026-09-01"
+      "publishedAt": "2026-09-01",
+      "sourceId": "dummy-vue-kerkrade",
+      "sourceName": "Voorbeelddata: Vue Kerkrade"
     },
     {
       "id": "vue-003",
@@ -378,7 +430,9 @@
       "fullContent": "Vue Kerkrade houdt de zondagochtendmatinee dit seizoen op een vast tarief van vijf euro per kaartje. Elke zondag om 10:30 draait er een animatiefilm, meestal een titel die al enkele weken loopt.\n\nKinderen tot vier jaar mogen gratis mee op schoot. Het geluid staat bij deze voorstellingen bewust enkele decibel lager en de zaallichten blijven gedempt aan in plaats van volledig uit.\n\nDe komende weken staan achtereenvolgens een tekenfilm over een verhuizend vogelgezin, een reeks korte films en een klassieke poppenanimatie op het programma.",
       "photoUrl": "https://picsum.photos/seed/vonk-vue-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/vue/familiematinee",
-      "publishedAt": "2026-08-30"
+      "publishedAt": "2026-08-30",
+      "sourceId": "dummy-vue-kerkrade",
+      "sourceName": "Voorbeelddata: Vue Kerkrade"
     },
     {
       "id": "vue-004",
@@ -388,7 +442,9 @@
       "fullContent": "De psychologische thriller die vorige maand in première ging, blijft twee weken langer op het programma staan. De bezoekcijfers hielden na de openingsweek opvallend goed stand, wat volgens de bioscoop vooral door mond-tot-mondreclame komt.\n\nDe film draait dagelijks om 20:30, met op vrijdag en zaterdag een extra late voorstelling om 22:45. Vanwege de leeftijdsclassificatie worden bezoekers onder de zestien niet toegelaten.\n\nWie de film al zag: de bioscoop organiseert eind september een nagesprek met een filmjournalist na de avondvoorstelling. Deelname is gratis voor bezoekers van die voorstelling.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/vue/thriller-verlengd",
-      "publishedAt": "2026-08-27"
+      "publishedAt": "2026-08-27",
+      "sourceId": "dummy-vue-kerkrade",
+      "sourceName": "Voorbeelddata: Vue Kerkrade"
     },
     {
       "id": "uiux-001",
@@ -398,7 +454,9 @@
       "fullContent": "Een laadindicator doet twee dingen: hij bevestigt dat er iets gebeurt en hij zet een verwachting. Een spinner doet alleen het eerste. Een skeleton screen toont de vorm van de content die eraan komt en doet daarmee ook het tweede.\n\nIn gebruikersonderzoek schatten deelnemers dezelfde laadtijd bij een skeleton consequent korter in dan bij een spinner. De verklaring is dat de blik alvast een structuur krijgt om te verwerken, waardoor de wachttijd minder leeg aanvoelt.\n\nDe valkuil is animatie. Een skeleton met een snelle glinsterbeweging trekt te veel aandacht naar het wachten zelf. Een trage, subtiele puls van twee seconden werkt beter dan een shimmer van een halve seconde.",
       "photoUrl": "https://picsum.photos/seed/vonk-uiux-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/design/skeleton-vs-spinner",
-      "publishedAt": "2026-09-03"
+      "publishedAt": "2026-09-03",
+      "sourceId": "dummy-ui-ux",
+      "sourceName": "Voorbeelddata: UI/UX & webdesign"
     },
     {
       "id": "uiux-002",
@@ -408,7 +466,9 @@
       "fullContent": "In donkere interfaces geeft puur wit op puur zwart het hoogste contrast, maar niet de beste leesbaarheid. Het felle verschil zorgt voor halation: letters lijken uit te vloeien, vooral bij mensen met astigmatisme.\n\nDe praktische richtlijn is om tekst rond 90 procent helderheid te zetten in plaats van 100, en de achtergrond niet volledig zwart maar op een donkergrijze toon te houden. Het contrast blijft ruim boven de toegankelijkheidsnorm terwijl het beeld rustiger wordt.\n\nVoor accentkleuren geldt het omgekeerde van lichte thema's: verzadigde kleuren die op wit prima werken, worden op donker snel te schel. Verlaag de verzadiging licht en verhoog de helderheid, dan blijft de kleur herkenbaar zonder te knallen.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/design/donker-thema-contrast",
-      "publishedAt": "2026-08-31"
+      "publishedAt": "2026-08-31",
+      "sourceId": "dummy-ui-ux",
+      "sourceName": "Voorbeelddata: UI/UX & webdesign"
     },
     {
       "id": "uiux-003",
@@ -418,7 +478,9 @@
       "fullContent": "Op telefoons met een groot scherm bereikt de duim comfortabel ongeveer de onderste zestig procent. Alles daarboven vraagt om het toestel in de hand te verschuiven, wat mensen wel doen maar als hinderlijk ervaren, zeker eenhandig in de trein.\n\nDe consequentie voor interfaces is duidelijk: primaire acties horen onderaan, terug- en sluitknoppen bij voorkeur ook. Toch staat de belangrijkste knop in veel apps nog bovenaan, meestal omdat het ontwerp uit een desktopindeling is doorvertaald.\n\nEen goedkope test: pak je eigen ontwerp op een telefoon vast met één hand en probeer de belangrijkste taak uit te voeren zonder je greep te verleggen. Wat je niet haalt, staat verkeerd.",
       "photoUrl": "https://picsum.photos/seed/vonk-uiux-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/design/duimbereik",
-      "publishedAt": "2026-08-28"
+      "publishedAt": "2026-08-28",
+      "sourceId": "dummy-ui-ux",
+      "sourceName": "Voorbeelddata: UI/UX & webdesign"
     },
     {
       "id": "uiux-004",
@@ -428,7 +490,9 @@
       "fullContent": "Voor interface-animaties bestaat een verrassend smalle bruikbare zone. Onder ongeveer 100 milliseconden neemt het oog de beweging nauwelijks waar en lijkt het element te springen. Boven de 300 milliseconden begint de interface traag aan te voelen, hoe mooi de beweging ook is.\n\nDe praktische standaard ligt daarom rond 200 milliseconden voor kleine overgangen zoals hover-states en het openen van een menu. Grotere bewegingen, zoals een paneel dat over het hele scherm schuift, mogen iets langer duren omdat de afgelegde afstand groter is.\n\nBelangrijker dan de duur is de easing. Een beweging die snel begint en zacht uitloopt voelt natuurlijk; een lineaire beweging voelt mechanisch, ook bij exact dezelfde duur.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/design/animatieduur",
-      "publishedAt": "2026-08-24"
+      "publishedAt": "2026-08-24",
+      "sourceId": "dummy-ui-ux",
+      "sourceName": "Voorbeelddata: UI/UX & webdesign"
     },
     {
       "id": "gad-001",
@@ -438,7 +502,9 @@
       "fullContent": "Een 25-inch e-inkmonitor kost ongeveer evenveel als drie goede lcd-schermen, dus de vraag is wat je ervoor terugkrijgt. Het antwoord is beperkt maar reëel: tekst leest als op papier en na een lange werkdag merk je verschil aan je ogen.\n\nVoor code en documenten werkt het beter dan verwacht. De verversingssnelheid haalt in de snelste modus ongeveer 15 beelden per seconde, genoeg om te typen en te scrollen zonder dat het storend wordt, mits je scrollen in stappen doet in plaats van vloeiend.\n\nAlles wat beweegt is onbruikbaar. Video, animaties en zelfs een muisaanwijzer die snel beweegt laten spookbeelden achter. Als tweede scherm naast een gewone monitor is het een luxe die zich alleen laat verdedigen door wie de hele dag leest.",
       "photoUrl": "https://picsum.photos/seed/vonk-gad-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/tech/eink-monitor-test",
-      "publishedAt": "2026-09-04"
+      "publishedAt": "2026-09-04",
+      "sourceId": "dummy-gadgets",
+      "sourceName": "Voorbeelddata: Gadgets & tech"
     },
     {
       "id": "gad-002",
@@ -448,7 +514,9 @@
       "fullContent": "Na een half jaar wisselen tussen zes powerbanks blijft één ontwerpkeuze doorslaggevend: een ingebouwde kabel. Losse kabels blijven thuis liggen, en een volle powerbank zonder kabel is een baksteen.\n\nDe geteste modellen met geïntegreerde USB-C-kabel wegen zo'n dertig gram meer en zijn iets dikker, maar leveren in de praktijk vaker daadwerkelijk stroom. De kabel is bij de betere modellen vervangbaar, wat belangrijk is omdat juist dat onderdeel als eerste slijt.\n\nLet bij aanschaf op het vermogen van de ingebouwde kabel: sommige zijn beperkt tot 20 watt terwijl de powerbank zelf 65 watt kan leveren. Voor een laptop is dat verschil de helft van je laadsnelheid.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/tech/powerbank-kabel",
-      "publishedAt": "2026-09-01"
+      "publishedAt": "2026-09-01",
+      "sourceId": "dummy-gadgets",
+      "sourceName": "Voorbeelddata: Gadgets & tech"
     },
     {
       "id": "gad-003",
@@ -458,7 +526,9 @@
       "fullContent": "Stille mechanische schakelaars klonken lang als een tegenstelling, maar de huidige generatie gedempte lineaire schakelaars komt dicht bij het ideaal: het aanslaggevoel blijft grotendeels intact terwijl het geluid ongeveer halveert.\n\nHet verschil zit in twee rubberen dempers in de schakelaar, die zowel het neergaande als het opgaande contact opvangen. Puristen vinden het aanslaggevoel daardoor iets doffer; wie op kantoor werkt, merkt vooral dat collega's stoppen met kijken.\n\nDe grootste geluidswinst zit overigens niet in de schakelaar maar in de behuizing. Een laag schuim onder de printplaat scheelt meer dan het wisselen van schakelaars, en kost een paar euro.",
       "photoUrl": "https://picsum.photos/seed/vonk-gad-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/tech/stille-schakelaars",
-      "publishedAt": "2026-08-29"
+      "publishedAt": "2026-08-29",
+      "sourceId": "dummy-gadgets",
+      "sourceName": "Voorbeelddata: Gadgets & tech"
     },
     {
       "id": "gad-004",
@@ -468,7 +538,9 @@
       "fullContent": "Een groeiende groep slimme lampen werkt volledig lokaal via een open protocol, zonder dat er ooit een verbinding met een server van de fabrikant nodig is. Dat lost het grootste probleem van slimme verlichting op: apparatuur die onbruikbaar wordt zodra een bedrijf de stekker uit zijn dienst trekt.\n\nIn de praktijk merk je het verschil vooral aan reactietijd. Een lokale schakelopdracht is er binnen enkele tientallen milliseconden, terwijl een cloudopdracht makkelijk een halve seconde kost, wat bij een lichtschakelaar direct als traag voelt.\n\nDe overstap kost wel een centrale hub of een compatibele router. Wie al een systeem heeft draaien, kan de meeste lampen zonder app van de fabrikant koppelen.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/tech/lokale-slimme-lampen",
-      "publishedAt": "2026-08-25"
+      "publishedAt": "2026-08-25",
+      "sourceId": "dummy-gadgets",
+      "sourceName": "Voorbeelddata: Gadgets & tech"
     },
     {
       "id": "ruim-001",
@@ -478,7 +550,9 @@
       "fullContent": "Een sonde heeft tijdens een scheervlucht op 400 kilometer hoogte de eerste gedetailleerde opnames gemaakt van de kant van een ijsmaan die altijd van de planeet is afgekeerd. De beelden werden na een vertraging van ruim een uur ontvangen.\n\nWat opvalt is het gebrek aan inslagkraters in bepaalde gebieden. Dat wijst op een jong oppervlak, wat betekent dat er iets is dat de korst regelmatig vernieuwt: waarschijnlijk cryovulkanisme, aangedreven door getijdenkrachten.\n\nDe volgende scheervlucht staat over vier maanden gepland en gaat tot op 120 kilometer. Dan worden ook spectrometermetingen gedaan om te bepalen welke zouten er in het ijs zitten.",
       "photoUrl": "https://picsum.photos/seed/vonk-ruim-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/ruimte/sonde-ijsmaan",
-      "publishedAt": "2026-09-03"
+      "publishedAt": "2026-09-03",
+      "sourceId": "dummy-ruimtevaart",
+      "sourceName": "Voorbeelddata: Ruimtevaart & wetenschap"
     },
     {
       "id": "ruim-002",
@@ -488,7 +562,9 @@
       "fullContent": "Nieuwe simulaties modelleren wat er gebeurt na een botsing tussen twee grote objecten in een drukke baan rond de aarde. De uitkomst is somber: de brokstukken verspreiden zich binnen weken over een schil van tientallen kilometers dik en blijven daar decennia hangen.\n\nHet effect op operationele satellieten is niet dat ze meteen geraakt worden, maar dat het aantal uitwijkmanoeuvres explodeert. Elke manoeuvre kost brandstof en dus levensduur, waardoor satellieten eerder vervangen moeten worden.\n\nDe economische conclusie van de studie is opvallend concreet: actief opruimen van enkele tientallen grote, uitgediende raketrompen is goedkoper dan de gezamenlijke kosten van extra uitwijkmanoeuvres over twintig jaar.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/ruimte/ruimteafval-simulatie",
-      "publishedAt": "2026-08-31"
+      "publishedAt": "2026-08-31",
+      "sourceId": "dummy-ruimtevaart",
+      "sourceName": "Voorbeelddata: Ruimtevaart & wetenschap"
     },
     {
       "id": "ruim-003",
@@ -498,7 +574,9 @@
       "fullContent": "In de atmosfeer van een exoplaneet op ongeveer 120 lichtjaar afstand is waterdamp aangetoond, samen met sporen van methaan. De meting kwam tot stand door het sterlicht te analyseren dat tijdens een overgang door de atmosfeer van de planeet schijnt.\n\nBelangrijk is wat de meting niet zegt. De planeet is aanzienlijk groter dan de aarde en de oppervlaktetemperatuur ligt vermoedelijk boven de honderd graden. Waterdamp is er een atmosferisch bestanddeel, geen oceaan.\n\nDe waarde zit in de methode. Dat dit type meting nu haalbaar is bij planeten van deze omvang, betekent dat kleinere en koelere werelden binnen enkele jaren binnen bereik komen.",
       "photoUrl": "https://picsum.photos/seed/vonk-ruim-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/ruimte/waterdamp-exoplaneet",
-      "publishedAt": "2026-08-28"
+      "publishedAt": "2026-08-28",
+      "sourceId": "dummy-ruimtevaart",
+      "sourceName": "Voorbeelddata: Ruimtevaart & wetenschap"
     },
     {
       "id": "ruim-004",
@@ -508,7 +586,9 @@
       "fullContent": "Een raket die naar een baan om de aarde gaat, kantelt al binnen een minuut na de lancering. Dat lijkt verspilling, maar het is precies de bedoeling: in een baan komen is geen kwestie van hoogte, maar van zijwaartse snelheid.\n\nOm op 400 kilometer hoogte te blijven cirkelen moet een object ongeveer 7,7 kilometer per seconde horizontaal bewegen. De hoogte zelf kost relatief weinig energie; de horizontale snelheid kost het overgrote deel van de brandstof.\n\nDe manoeuvre heet een zwaartekrachtbocht. Door vroeg licht te kantelen laat de raket de zwaartekracht zelf het draaien doen, wat structureel gewicht en stuurcorrecties bespaart.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/ruimte/zwaartekrachtbocht",
-      "publishedAt": "2026-08-22"
+      "publishedAt": "2026-08-22",
+      "sourceId": "dummy-ruimtevaart",
+      "sourceName": "Voorbeelddata: Ruimtevaart & wetenschap"
     },
     {
       "id": "psy-001",
@@ -518,7 +598,9 @@
       "fullContent": "Onderzoek naar gewoontevorming laat consistent zien dat de omvang van de eerste stap belangrijker is dan de motivatie op dat moment. Wie zich voorneemt drie kwartier te sporten, slaat vaker over dan wie zich voorneemt de schoenen aan te doen.\n\nDe reden is dat motivatie fluctueert en drempels constant zijn. Door de startdrempel te verlagen tot iets dat binnen twee minuten te doen is, verklein je de afhankelijkheid van je humeur op dat moment. In de praktijk gaat een groot deel van die tweeminutenstarts door in een volledige sessie.\n\nDe keerzijde geldt ook. Voor gewoontes die je wilt afleren werkt het verhogen van de drempel: een app een schermpje verder zetten, of de oplader in een andere kamer leggen, doet meer dan wilskracht.",
       "photoUrl": "https://picsum.photos/seed/vonk-psy-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/psychologie/twee-minuten-regel",
-      "publishedAt": "2026-09-02"
+      "publishedAt": "2026-09-02",
+      "sourceId": "dummy-psychologie",
+      "sourceName": "Voorbeelddata: Psychologie & zelfverbetering"
     },
     {
       "id": "psy-002",
@@ -528,7 +610,9 @@
       "fullContent": "Het effect is bekend uit bibliotheken en cafés: mensen werken langer door in een ruimte waar anderen zichtbaar aan het werk zijn, ook zonder enige interactie. In gecontroleerde studies gaat het om tientallen procenten meer volgehouden aandacht.\n\nDe verklaring lijkt tweeledig. Er is een zwakke sociale druk om niet als enige te stoppen, en er is een omgevingssignaal: de ruimte is duidelijk voor werken bedoeld, wat het schakelen naar afleiding iets minder vanzelfsprekend maakt.\n\nOpvallend is dat het effect ook optreedt bij videoverbindingen waarin mensen zwijgend samen werken. Wie thuis werkt en moeite heeft met starten, haalt daar meer uit dan uit weer een nieuwe productiviteitsmethode.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/psychologie/samen-werken-focus",
-      "publishedAt": "2026-08-30"
+      "publishedAt": "2026-08-30",
+      "sourceId": "dummy-psychologie",
+      "sourceName": "Voorbeelddata: Psychologie & zelfverbetering"
     },
     {
       "id": "psy-003",
@@ -538,7 +622,9 @@
       "fullContent": "Na één korte nacht presteren mensen op veel cognitieve taken nauwelijks slechter dan normaal, wat verklaart waarom slaaptekort zo makkelijk onderschat wordt. De schade zit ergens anders.\n\nWat wel duidelijk verslechtert, is het inschatten van emoties bij anderen. Deelnemers beoordeelden neutrale gezichtsuitdrukkingen na een korte nacht vaker als vijandig of afwijzend. Tegelijk reageerden ze zelf sterker op kleine tegenslagen.\n\nDe praktische betekenis is dat slaaptekort vooral sociale kosten heeft. Wie na een korte nacht een lastig gesprek voert, gaat niet alleen met minder energie het gesprek in, maar ook met een systematisch negatievere lezing van de ander.",
       "photoUrl": "https://picsum.photos/seed/vonk-psy-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/psychologie/slaap-emoties",
-      "publishedAt": "2026-08-27"
+      "publishedAt": "2026-08-27",
+      "sourceId": "dummy-psychologie",
+      "sourceName": "Voorbeelddata: Psychologie & zelfverbetering"
     },
     {
       "id": "psy-004",
@@ -548,7 +634,9 @@
       "fullContent": "Een doel beschrijft een uitkomst: tien kilo lichter, een boek geschreven, een baan gevonden. Over geen van die uitkomsten heb je directe controle, alleen invloed. Dat maakt doelen slechte stuurinformatie: je weet pas achteraf of het gelukt is.\n\nEen systeem beschrijft gedrag dat je wel kunt kiezen: vier keer per week een half uur bewegen, elke ochtend driehonderd woorden schrijven, wekelijks twee sollicitaties versturen. Dat is meetbaar op de dag zelf.\n\nDe nuance die vaak wegvalt: doelen zijn niet nutteloos. Ze bepalen de richting waarin je een systeem ontwerpt. Maar zodra het systeem staat, is het doel niet meer waar je dagelijks naar kijkt.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/psychologie/doelen-versus-systemen",
-      "publishedAt": "2026-08-23"
+      "publishedAt": "2026-08-23",
+      "sourceId": "dummy-psychologie",
+      "sourceName": "Voorbeelddata: Psychologie & zelfverbetering"
     },
     {
       "id": "gesch-001",
@@ -558,7 +646,9 @@
       "fullContent": "Toen in 1965 werd aangekondigd dat de Limburgse steenkoolmijnen zouden sluiten, verdween binnen tien jaar de economische basis van een hele regio. Het ging om tienduizenden directe banen en een veelvoud daarvan aan werk bij toeleveranciers.\n\nDe vervangende werkgelegenheid die werd beloofd, kwam maar deels. Overheidsdiensten werden naar de regio verplaatst en er kwam industrie bij, maar veel daarvan verdween in latere decennia opnieuw. De werkloosheid bleef structureel boven het landelijk gemiddelde.\n\nWat bleef, is zichtbaar in het landschap en in het zelfbeeld van de streek. De mijnsteenbergen zijn heuvels geworden, de schachtgebouwen deels monument, en de herinnering aan het werk ondergronds is in Kerkrade en omgeving nog altijd aanwezig.",
       "photoUrl": "https://picsum.photos/seed/vonk-gesch-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/geschiedenis/mijnsluiting-limburg",
-      "publishedAt": "2026-09-01"
+      "publishedAt": "2026-09-01",
+      "sourceId": "dummy-geschiedenis",
+      "sourceName": "Voorbeelddata: Geschiedenis & weetjes"
     },
     {
       "id": "gesch-002",
@@ -568,7 +658,9 @@
       "fullContent": "Het beeld van de middeleeuwse stad als open riool komt vooral uit negentiende-eeuwse literatuur, niet uit archieven. Stadsrekeningen uit de veertiende en vijftiende eeuw laten iets anders zien: betaalde straatreinigers, aanbestede vuilkarren en boetes voor wie afval buiten de aangewezen plekken dumpte.\n\nDat betekent niet dat het schoon was naar hedendaagse maatstaven. Wel dat er een besef van openbare hygiëne bestond en dat stadsbesturen er geld aan uitgaven, wat in de bronnen terug te vinden is tot op het niveau van individuele betalingen.\n\nDe echte verslechtering kwam later, tijdens de snelle verstedelijking van de negentiende eeuw, toen de bevolking veel sneller groeide dan de voorzieningen. Precies in die periode werd het beeld van de vuile middeleeuwen gevormd.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/geschiedenis/middeleeuwse-hygiene",
-      "publishedAt": "2026-08-29"
+      "publishedAt": "2026-08-29",
+      "sourceId": "dummy-geschiedenis",
+      "sourceName": "Voorbeelddata: Geschiedenis & weetjes"
     },
     {
       "id": "gesch-003",
@@ -578,7 +670,9 @@
       "fullContent": "De uitbarsting van de Tambora in 1815 blies zoveel as de atmosfeer in dat 1816 in Europa en Noord-Amerika de geschiedenis in ging als het jaar zonder zomer. Sneeuw in juni, mislukte oogsten en hongersnood waren het gevolg.\n\nEen minder bekend gevolg was de haverprijs. Paarden werden onbetaalbaar om te voeden, waardoor in Duitsland werd gezocht naar vervoer zonder dier. Karl Drais presenteerde in 1817 zijn loopfiets, de directe voorloper van de fiets.\n\nHetzelfde sombere weer hield een gezelschap schrijvers in Zwitserland binnen, waar ze elkaar spookverhalen voorlazen. Uit die weken kwam Frankenstein voort. Eén vulkaanuitbarsting, twee culturele gevolgen die niemand had kunnen voorspellen.",
       "photoUrl": "https://picsum.photos/seed/vonk-gesch-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/geschiedenis/jaar-zonder-zomer",
-      "publishedAt": "2026-08-26"
+      "publishedAt": "2026-08-26",
+      "sourceId": "dummy-geschiedenis",
+      "sourceName": "Voorbeelddata: Geschiedenis & weetjes"
     },
     {
       "id": "gesch-004",
@@ -588,7 +682,9 @@
       "fullContent": "De meest gebruikte spoorbreedte ter wereld is 1435 millimeter, een getal dat willekeurig oogt. De herkomst ligt bij de Engelse mijnbouw, waar kolenwagens over houten rails reden met een asbreedte die uit de lokale wagenbouw kwam.\n\nToen George Stephenson locomotieven ging bouwen, gebruikte hij de maat die hij kende. Omdat zijn lijnen succesvol waren en aansluitende lijnen dezelfde maat moesten hanteren om erop te kunnen rijden, verspreidde de standaard zich door netwerkeffect, niet door een besluit.\n\nLanden die bewust een andere breedte kozen, deden dat vaak uit militaire overwegingen: een afwijkend spoor maakt het lastiger voor een buurland om troepen binnen te rijden. Die keuzes zijn tot vandaag zichtbaar aan grenzen waar treinen van bogie moeten wisselen.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/geschiedenis/spoorbreedte",
-      "publishedAt": "2026-08-21"
+      "publishedAt": "2026-08-21",
+      "sourceId": "dummy-geschiedenis",
+      "sourceName": "Voorbeelddata: Geschiedenis & weetjes"
     },
     {
       "id": "nat-001",
@@ -598,7 +694,9 @@
       "fullContent": "De bever verdween rond 1826 uit Nederland en is sinds de herintroductie in de jaren tachtig weer wijdverspreid. In Limburgse beken zijn de effecten nu goed zichtbaar: dammen die het water vasthouden, poelen die ontstaan en dood hout dat in de stroom blijft liggen.\n\nEcologisch is dat overwegend gunstig. De poelen vormen leefgebied voor amfibieën en insecten, het vastgehouden water vertraagt piekafvoer na hevige regen en verhoogt in droge zomers het grondwaterpeil in de directe omgeving.\n\nEr is ook een keerzijde. Ondergraven oevers bij kades en verstopte duikers kosten waterschappen geld, en op een enkele plek moet een dam worden verlaagd. Het beleid is nu vooral gericht op meebewegen in plaats van verwijderen.",
       "photoUrl": "https://picsum.photos/seed/vonk-nat-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/natuur/bevers-limburg",
-      "publishedAt": "2026-09-03"
+      "publishedAt": "2026-09-03",
+      "sourceId": "dummy-natuur",
+      "sourceName": "Voorbeelddata: Natuur & dieren"
     },
     {
       "id": "nat-002",
@@ -608,7 +706,9 @@
       "fullContent": "De aanname was lang dat insecten door licht worden aangetrokken. Hogesnelheidsopnames laten iets anders zien: ze draaien hun rug naar de felste lichtbron, een reflex die onder de open hemel prima werkt omdat de hemel altijd boven is.\n\nBij een kunstmatige lamp klopt die aanname niet meer. Het insect kantelt zijn lichaam ten opzichte van de lamp en belandt daardoor in een baan eromheen, of stort omlaag wanneer de lamp van onderen schijnt. Het lijkt aantrekking, maar het is een verstoorde oriëntatie.\n\nDe praktische les voor buitenverlichting: fel licht dat omhoog of zijwaarts schijnt richt de meeste schade aan. Naar beneden gerichte, afgeschermde armaturen met warm licht verstoren merkbaar minder.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/natuur/nachtvlinders-licht",
-      "publishedAt": "2026-08-31"
+      "publishedAt": "2026-08-31",
+      "sourceId": "dummy-natuur",
+      "sourceName": "Voorbeelddata: Natuur & dieren"
     },
     {
       "id": "nat-003",
@@ -618,7 +718,9 @@
       "fullContent": "Boomwortels zijn in bijna alle bossen verbonden met mycorrhizaschimmels, die suikers van de boom krijgen en in ruil water en mineralen leveren. Omdat één schimmelnetwerk meerdere bomen kan raken, ontstaat een ondergrondse verbinding tussen individuen.\n\nDat er via die netwerken koolstof tussen bomen beweegt, is aangetoond met gemerkte isotopen. Waar de wetenschappelijke discussie over gaat, is de interpretatie: is het gerichte hulp aan zwakkere bomen, of eerder een bijproduct van schimmels die hun eigen belang volgen?\n\nDe voorzichtige lezing is de tweede. Het beeld van een bos als solidair netwerk is aantrekkelijk maar loopt vooruit op de data. Wat wel vaststaat: verstoring van de bodem beschadigt dit netwerk en dat remt de groei van jonge bomen jarenlang.",
       "photoUrl": "https://picsum.photos/seed/vonk-nat-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/natuur/schimmelnetwerk-bos",
-      "publishedAt": "2026-08-28"
+      "publishedAt": "2026-08-28",
+      "sourceId": "dummy-natuur",
+      "sourceName": "Voorbeelddata: Natuur & dieren"
     },
     {
       "id": "nat-004",
@@ -628,7 +730,9 @@
       "fullContent": "Tellingen over dertig jaar laten zien dat kleine zwanen hun overwinteringsgebied gemiddeld honderden kilometers oostwaarts hebben verlegd. Vogels die vroeger tot in Nederland en Engeland vlogen, blijven nu vaker in Duitsland en Polen.\n\nDe directe oorzaak is voedsel: bij zachtere winters blijven oostelijker gelegen gebieden ijsvrij, waardoor de extra vliegkilometers geen voordeel meer opleveren. Vanuit het individuele dier bekeken is de verschuiving dus rationeel.\n\nDe zorg zit in de gevolgen voor beschermingsbeleid. Reservaten en beheerafspraken zijn ingericht op de oude route. Verschuift de populatie sneller dan het beleid, dan verliezen die gebieden hun functie terwijl de nieuwe pleisterplaatsen geen bescherming genieten.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/natuur/kleine-zwaan-trek",
-      "publishedAt": "2026-08-24"
+      "publishedAt": "2026-08-24",
+      "sourceId": "dummy-natuur",
+      "sourceName": "Voorbeelddata: Natuur & dieren"
     },
     {
       "id": "reis-001",
@@ -638,7 +742,9 @@
       "fullContent": "De nachttrein richting Wenen is aantrekkelijk op papier: je stapt 's avonds in en bent na het ontbijt in het centrum, zonder vliegveld, zonder wachtrij, zonder hotelnacht.\n\nIn de praktijk hangt het oordeel volledig af van wat je boekt. Een stoel in een zitrijtuig is goedkoop en vrijwel onslaapbaar: licht, geluid en medereizigers zorgen dat je hooguit dommelt. Een plek in een zespersoons couchette is een enorme verbetering voor een beperkte meerprijs, en een eigen slaapcabine maakt het echt comfortabel.\n\nHou rekening met vertragingen: nachttreinen krijgen 's nachts lage prioriteit op het net. Plan de ochtend na aankomst dus niet vol, en boek geen aansluitende reis met minder dan twee uur marge.",
       "photoUrl": "https://picsum.photos/seed/vonk-reis-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/reizen/nachttrein-wenen",
-      "publishedAt": "2026-09-02"
+      "publishedAt": "2026-09-02",
+      "sourceId": "dummy-reizen",
+      "sourceName": "Voorbeelddata: Reizen & avontuur"
     },
     {
       "id": "reis-002",
@@ -648,7 +754,9 @@
       "fullContent": "De Azoren liggen midden op de Atlantische Oceaan en dat merk je aan het weer: vier seizoenen per dag is geen overdrijving. Wie op zonnegarantie rekent komt bedrogen uit; wie regenkleding meeneemt krijgt er een archipel voor terug die zelfs in augustus nauwelijks druk is.\n\nHet hoofdeiland biedt kratermeren, thermale bronnen waar je in warm bruin water zit terwijl het regent, en wandelroutes langs kliffen van honderden meters. Voor walvis- en dolfijnexcursies is de kans op waarnemingen hoog, al is de zee vaak ruw.\n\nPraktisch: huur een auto, want het openbaar vervoer is beperkt en de afstanden zijn groter dan de kaart suggereert door de bochtige wegen. Twee eilanden in tien dagen is comfortabel, drie is haasten.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/reizen/azoren-zomer",
-      "publishedAt": "2026-08-30"
+      "publishedAt": "2026-08-30",
+      "sourceId": "dummy-reizen",
+      "sourceName": "Voorbeelddata: Reizen & avontuur"
     },
     {
       "id": "reis-003",
@@ -658,7 +766,9 @@
       "fullContent": "Een meerdaagse wandeling wordt vaak gecompliceerd door de auto: je moet terug naar waar je begon. In de Ardennen is dat op te lossen met het spoor. Vanuit Luik brengen regionale treinen je naar dorpen langs de Ourthe, waar routes van dorp naar dorp lopen.\n\nEen prettige indeling is drie etappes van rond de twintig kilometer, met overnachtingen in kleine hotels of gîtes. Het hoogteverschil is bescheiden maar constant: reken op vijfhonderd hoogtemeters per dag, verdeeld over veel korte klimmen.\n\nBoek de overnachtingen vooraf, zeker in het hoogseizoen. Buiten de dorpen is er weinig, dus neem water en lunch mee. Het traject is goed gemarkeerd, maar een offline kaart op je telefoon is geen luxe: dekking valt regelmatig weg in de dalen.",
       "photoUrl": "https://picsum.photos/seed/vonk-reis-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/reizen/ardennen-wandeling",
-      "publishedAt": "2026-08-27"
+      "publishedAt": "2026-08-27",
+      "sourceId": "dummy-reizen",
+      "sourceName": "Voorbeelddata: Reizen & avontuur"
     },
     {
       "id": "reis-004",
@@ -668,7 +778,9 @@
       "fullContent": "Reizen met alleen handbagage scheelt vooral tijd: geen inchecken, geen wachten bij de band, geen kwijtgeraakte koffer. De prijs is dat je keuzes moet maken, en die keuzes zijn na een paar reizen behoorlijk voorspelbaar.\n\nWat werkt: kleding in één kleurenschema zodat alles combineert, drie sets ondergoed en sokken plus onderweg wassen, één paar schoenen aan de voeten en hooguit één extra paar, en toiletartikelen in vaste vorm omdat die niet onder de vloeistoffenregel vallen.\n\nWat niet werkt: kleding meenemen voor het weer dat misschien komt. Een dunne regenjas en een laagjessysteem dekken meer af dan een dikke jas die je drie dagen draagt en vier dagen sleept.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/reizen/handbagage-lijst",
-      "publishedAt": "2026-08-22"
+      "publishedAt": "2026-08-22",
+      "sourceId": "dummy-reizen",
+      "sourceName": "Voorbeelddata: Reizen & avontuur"
     },
     {
       "id": "biz-001",
@@ -678,7 +790,9 @@
       "fullContent": "Bijna elke beginnende oprichter zoekt eerst naar een schaalbaar kanaal: advertenties, content, een wachtlijst. Dat is de verkeerde volgorde, want zonder bewijs dat mensen het product willen, schaal je vooral verspilling.\n\nDe eerste tien klanten komen vrijwel altijd uit directe gesprekken. Niet uit pitches, maar uit vragen: wat doe je nu om dit op te lossen, hoeveel tijd kost dat, wat heb je al geprobeerd. Wie tien van die gesprekken voert, weet binnen twee weken meer dan uit maanden analytics.\n\nHet ongemak is de kern. Direct benaderen voelt onprettig en dat is precies waarom de meesten het overslaan ten gunste van iets bouwen. Bouwen voelt productief, maar bewijst niets.",
       "photoUrl": "https://picsum.photos/seed/vonk-biz-001/800/600",
       "sourceUrl": "https://voorbeeld.nl/business/eerste-tien-klanten",
-      "publishedAt": "2026-09-04"
+      "publishedAt": "2026-09-04",
+      "sourceId": "dummy-business",
+      "sourceName": "Voorbeelddata: Ondernemerschap & business"
     },
     {
       "id": "biz-002",
@@ -688,7 +802,9 @@
       "fullContent": "Van alle knoppen waaraan je kunt draaien om de winst te verhogen, is prijs de meest directe. Tien procent meer volume vraagt meer marketing, meer support en meer capaciteit. Tien procent hogere prijs valt volledig in de marge.\n\nDe angst is klantverlies, maar die is meestal overschat. Bij een prijsverhoging van tien procent hoef je pas te verliezen zodra meer dan een aanzienlijk deel van de klanten vertrekt, en in de praktijk vertrekt bij een goed uitgelegde verhoging een fractie daarvan.\n\nWat wel telt is de uitvoering: kondig het ruim van tevoren aan, laat bestaande klanten een periode op het oude tarief zitten, en koppel de verhoging aan iets concreets dat je hebt toegevoegd. De verhoging zelf is zelden het probleem, de verrassing wel.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/business/prijs-verhogen",
-      "publishedAt": "2026-09-01"
+      "publishedAt": "2026-09-01",
+      "sourceId": "dummy-business",
+      "sourceName": "Voorbeelddata: Ondernemerschap & business"
     },
     {
       "id": "biz-003",
@@ -698,7 +814,9 @@
       "fullContent": "Wie naast zijn studie gaat freelancen, rekent vaak met een uurtarief alsof het een salaris is. Dat gaat mis op drie punten. Ten eerste zijn niet alle uren factureerbaar: acquisitie, administratie en offertes kosten al snel een derde van je tijd.\n\nTen tweede is de btw geen inkomen. Wat je factureert inclusief btw hoort deels aan de Belastingdienst, en wie dat op één rekening laat staan geeft het onvermijdelijk uit. Een aparte rekening waar je btw direct naartoe boekt, lost dat op zonder discipline.\n\nTen derde varieert het werk. Reken met een buffer van minstens twee maanden vaste lasten voordat je opdrachten weigert of investeringen doet. Wie die drie dingen regelt, houdt aan freelancen naast een studie realistisch iets over.",
       "photoUrl": "https://picsum.photos/seed/vonk-biz-003/800/600",
       "sourceUrl": "https://voorbeeld.nl/business/freelance-naast-studie",
-      "publishedAt": "2026-08-29"
+      "publishedAt": "2026-08-29",
+      "sourceId": "dummy-business",
+      "sourceName": "Voorbeelddata: Ondernemerschap & business"
     },
     {
       "id": "biz-004",
@@ -708,7 +826,9 @@
       "fullContent": "Omzet is een achterblijvende indicator: als die daalt, is het probleem al maanden geleden ontstaan. Toch is het bij veel kleine bedrijven het enige getal dat structureel wordt gevolgd.\n\nDe voorspellende getallen zitten eerder in de keten. Hoeveel procent van de klanten koopt een tweede keer, hoeveel aanvragen komen er per week binnen, en hoeveel daarvan worden een offerte. Die drie samen vertellen maanden eerder waar de omzet heen gaat.\n\nHet meten hoeft niet ingewikkeld. Een spreadsheet met vier kolommen die je elke vrijdag tien minuten bijhoudt, geeft na een kwartaal een trend die betrouwbaarder stuurt dan het gevoel dat het druk of rustig is.",
       "photoUrl": null,
       "sourceUrl": "https://voorbeeld.nl/business/wat-je-moet-meten",
-      "publishedAt": "2026-08-25"
+      "publishedAt": "2026-08-25",
+      "sourceId": "dummy-business",
+      "sourceName": "Voorbeelddata: Ondernemerschap & business"
     }
   ]
 }

@@ -173,7 +173,7 @@
     async fetchRow(code) {
       const rows = await this._request(
         config.table + '?sync_code=eq.' + encodeURIComponent(code) +
-        '&select=saved_items,dismissed_ids,followed_categories,updated_at'
+        '&select=saved_items,dismissed_items,followed_categories,updated_at'
       );
       return Array.isArray(rows) && rows.length ? rows[0] : null;
     },
@@ -183,7 +183,9 @@
       const body = [{
         sync_code: code,
         saved_items: payload.saved || [],
-        dismissed_ids: payload.dismissed || [],
+        // fase 4: volledige items, zodat het kwaliteitsoverzicht ook op een
+        // tweede apparaat klopt
+        dismissed_items: payload.dismissed || [],
         followed_categories: payload.followed || [],
         // expliciet meesturen: de default van de kolom geldt alleen bij insert
         updated_at: new Date().toISOString()
@@ -240,7 +242,10 @@
       const list = (value) => (Array.isArray(value) ? value : []);
       return {
         saved: list(row.saved_items),
-        dismissed: list(row.dismissed_ids),
+        // dismissed_ids is het oude fase 3-veld; oude rijen blijven werken
+        dismissed: list(row.dismissed_items).length
+          ? list(row.dismissed_items)
+          : list(row.dismissed_ids).map((id) => (typeof id === 'string' ? { id } : id)),
         followed: list(row.followed_categories),
         updatedAt: row.updated_at || null
       };
@@ -264,9 +269,18 @@
       );
       const savedIds = new Set(saved.map((i) => i.id));
 
+      // Weggeswipete items zijn sinds fase 4 volledige objecten; ontdubbelen
+      // gaat dus op id, net als bij de bewaarde items.
+      const dismissedById = new Map();
+      for (const entry of [...(a.dismissed || []), ...(b.dismissed || [])]) {
+        const item = typeof entry === 'string' ? { id: entry } : entry;
+        if (!item || !item.id) continue;
+        const bestaand = dismissedById.get(item.id);
+        // het rijkste exemplaar wint: eentje mét bron boven eentje zonder
+        if (!bestaand || (!bestaand.sourceId && item.sourceId)) dismissedById.set(item.id, item);
+      }
       // een bewaard item hoort niet ook in de weggeswipete lijst te staan
-      const dismissed = [...new Set([...(a.dismissed || []), ...(b.dismissed || [])])]
-        .filter((id) => !savedIds.has(id));
+      const dismissed = [...dismissedById.values()].filter((item) => !savedIds.has(item.id));
 
       const followed = [...new Set([...(a.followed || []), ...(b.followed || [])])];
       return { saved, dismissed, followed };

@@ -35,8 +35,19 @@ for (const source of sources) {
     const body = await fetchText(source.url, {
       timeoutMs: 15000,
       retries: 0,
-      accept: source.type === 'scrape' ? 'text/html,application/xhtml+xml' : undefined
+      accept: source.type === 'scrape' ? 'text/html,application/xhtml+xml'
+        : source.type === 'f1' ? 'application/json' : undefined
     });
+
+    if (source.type === 'f1') {
+      const doc = JSON.parse(body);
+      const races = doc?.MRData?.RaceTable?.Races || [];
+      results.push({
+        source, ok: races.length > 0, count: races.length, ms: Date.now() - started,
+        detail: races.length ? 'seizoen ' + (races[0].season || '?') : 'geen races in het antwoord'
+      });
+      continue;
+    }
 
     if (source.type === 'scrape') {
       const looksLikePage = /<html/i.test(body);
