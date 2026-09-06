@@ -6,7 +6,7 @@
    de laatst geladen data blijft werken.
    ========================================================= */
 
-const VERSION = 'vonk-v3';
+const VERSION = 'vonk-v5';
 const SHELL_CACHE = VERSION + '-shell';
 const DATA_CACHE = VERSION + '-data';
 
@@ -15,6 +15,7 @@ const SHELL_ASSETS = [
   './index.html',
   './style.css',
   './script.js',
+  './sync.js',
   './manifest.json',
   './icons/icon-192.png',
   './icons/icon-512.png'
@@ -23,10 +24,18 @@ const SHELL_ASSETS = [
 // Alles wat als "de feed" telt: het live endpoint eerst, daarna de lokale
 // terugvalbestanden. Deze paden gaan network-first met de cache als vangnet,
 // zodat de app offline de laatst geladen feed toont.
+// Paden die nooit cache-first mogen: dynamische antwoorden die per verzoek
+// kunnen verschillen. (Supabase draait op een eigen domein en valt al onder
+// de cross-origin-tak, maar een self-hosted opstelling kan same-origin zijn.)
+const NEVER_CACHE_FIRST = ['/.netlify/functions/', '/rest/v1/', '/api/'];
+
 const DATA_PATHS = [
   '/.netlify/functions/get-feed',
   '/data/feed.json',
-  '/data/dummy-data.json'
+  '/data/dummy-data.json',
+  // De Supabase-configuratie wordt per deploy gegenereerd; hem cache-first
+  // serveren zou een gewijzigde sleutel dagenlang stil kunnen blokkeren.
+  '/public/supabase-config.js'
 ];
 
 self.addEventListener('install', (event) => {
@@ -99,6 +108,14 @@ self.addEventListener('fetch', (event) => {
         })
         .catch(() => caches.match(request))
     );
+    return;
+  }
+
+  // Alles wat dynamisch is blijft van het netwerk komen, ook al staat het op
+  // dezelfde origin: functions en database-verkeer mogen nooit uit de cache
+  // beantwoord worden, anders krijgt de app een bevroren antwoord terug.
+  if (sameOrigin && NEVER_CACHE_FIRST.some((prefix) => url.pathname.startsWith(prefix))) {
+    event.respondWith(fetch(request).catch(() => caches.match(request)));
     return;
   }
 

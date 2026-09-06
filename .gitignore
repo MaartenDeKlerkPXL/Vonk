@@ -8,3 +8,6 @@ node_modules/
 data/feed.json
 data/feed.local.json
 data/last-run.json
+
+# door de build gegenereerd uit de Netlify env vars - nooit in git
+public/supabase-config.js

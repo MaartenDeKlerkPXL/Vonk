@@ -39,8 +39,16 @@
     dismissed: 'dismissed',
     saved: 'saved',
     lastAction: 'lastAction',
-    onboarded: 'onboarded'
+    onboarded: 'onboarded',
+    // fase 3 - alleen deze drie hierboven worden gesynchroniseerd;
+    // lastAction (undo) en onboarded blijven per apparaat
+    syncCode: 'syncCode',
+    syncPending: 'syncPending',
+    syncAt: 'syncAt'
   };
+
+  /** Wijzigingen aan deze sleutels gaan ook naar Supabase. */
+  const SYNCED_KEYS = [KEYS.followed, KEYS.dismissed, KEYS.saved];
 
   /* ------------------------------------------------------
      STORAGE — async adapter (Fase 3: hier Supabase inpluggen)
@@ -79,6 +87,9 @@
       } catch (err) {
         console.warn('[vonk] kon opslag niet schrijven:', key, err);
       }
+      // Lokaal is de bron van waarheid: hierboven is al geschreven, dus de
+      // UI wacht nergens op. De server volgt op de achtergrond.
+      if (SYNCED_KEYS.indexOf(key) !== -1) markSyncDirty();
     },
 
     async remove(key) {
@@ -91,6 +102,44 @@
       }
     }
   };
+
+  /* ------------------------------------------------------
+     SYNC-BRUG
+     Alles wat met Supabase praat zit in sync.js. Hier staat alleen
+     hoe de app daarop reageert. Ontbreekt sync.js of de configuratie,
+     dan doet dit niets en werkt de app puur lokaal door.
+     ------------------------------------------------------ */
+  function syncLayer() {
+    return window.VonkSync || null;
+  }
+
+  function markSyncDirty() {
+    const sync = syncLayer();
+    if (!sync || sync.applyingRemote) return;
+    sync.markDirty();
+  }
+
+  /** Een stand die van een ander apparaat binnenkomt toepassen. */
+  function applyRemoteState(data) {
+    state.saved = Array.isArray(data.saved) ? data.saved : [];
+    state.savedIds = new Set(state.saved.map((i) => i.id));
+    state.dismissed = new Set(Array.isArray(data.dismissed) ? data.dismissed : []);
+
+    const known = new Set(state.categories.map((c) => c.id));
+    state.followed = new Set(
+      (Array.isArray(data.followed) ? data.followed : []).filter((id) => known.has(id))
+    );
+
+    // een undo van vóór de synchronisatie slaat nergens meer op
+    state.lastAction = null;
+    storage.remove(KEYS.lastAction);
+
+    updateSavedBadge();
+    updateUndoButtons();
+    if (state.items.length) rebuildFeed();
+    if (state.screen === 'saved') renderSaved();
+    if (state.screen === 'categories') renderCategories();
+  }
 
   /* ------------------------------------------------------
      DATABRON
@@ -163,7 +212,9 @@
       'catTitle', 'catSub', 'btnCatDone', 'btnSelectAll', 'btnSelectNone', 'tabBadge',
       'detail', 'detailClose', 'detailFigure', 'detailImage', 'detailCategory',
       'detailDate', 'detailTitle', 'detailText', 'detailSource', 'detailActions', 'detailScroll',
-      'toast'
+      'toast',
+      'syncPanel', 'syncStatus', 'syncIntro', 'syncCodeRow', 'syncCode', 'syncNote',
+      'btnSyncCopy', 'btnSyncUnlink', 'btnSyncEnable', 'syncInput', 'btnSyncLink'
     ];
     ids.forEach((id) => { el[id] = document.getElementById(id); });
     el.screens = {
@@ -352,6 +403,7 @@
     });
 
     updateCategoryFooter();
+    renderSync();
 
     const first = !state.onboarded;
     el.catTitle.textContent = first ? 'Wat wil je volgen?' : 'Jouw categorieën';
@@ -381,6 +433,159 @@
       ? 'Nog geen categorie gekozen'
       : plural(n, 'categorie gevolgd', 'categorieën gevolgd');
     el.btnCatDone.disabled = n === 0;
+  }
+
+  /* ------------------------------------------------------
+     SYNC-SCHERM
+     ------------------------------------------------------ */
+  const SYNC_STATUS_TEKST = {
+    'uit': 'uit',
+    'aan': 'aan',
+    'bezig': 'bezig',
+    'wacht': 'wacht op verbinding',
+    'fout': 'fout',
+    'niet-ingesteld': 'niet ingesteld'
+  };
+
+  function setSyncNote(text, tone) {
+    el.syncNote.textContent = text || '';
+    if (tone) el.syncNote.dataset.tone = tone;
+    else delete el.syncNote.dataset.tone;
+  }
+
+  function renderSync(syncState) {
+    const sync = syncLayer();
+    if (!sync) { el.syncPanel.hidden = true; return; }
+
+    const st = syncState || sync.state;
+    const linked = Boolean(st.code);
+
+    el.syncStatus.textContent = SYNC_STATUS_TEKST[st.status] || st.status;
+    el.syncStatus.dataset.status = st.status;
+
+    el.syncCodeRow.hidden = !linked;
+    el.btnSyncEnable.hidden = linked || !sync.configured;
+    if (linked) el.syncCode.textContent = sync.formatCode(st.code);
+
+    el.syncInput.disabled = !sync.configured;
+    el.btnSyncLink.disabled = !sync.configured;
+
+    if (!sync.configured) {
+      el.syncIntro.textContent =
+        'Synchronisatie is niet ingesteld voor deze installatie: de app draait zonder ' +
+        'Supabase-gegevens. Alles werkt gewoon, maar blijft op dit apparaat.';
+      return;
+    }
+
+    el.syncIntro.textContent = linked
+      ? 'Voer deze code in op je andere apparaat om dezelfde bewaarde items, ' +
+        'overgeslagen items en categorieën te zien. Bewaar hem goed en deel hem niet: ' +
+        'wie de code heeft, heeft je archief.'
+      : 'Met een syncode zie je je bewaarde items op al je apparaten. Geen account, ' +
+        'geen wachtwoord: de code is de sleutel.';
+
+    if (st.status === 'fout' && st.error) setSyncNote('Laatste poging mislukte: ' + st.error, 'fout');
+    else if (st.status === 'wacht') setSyncNote('Wijzigingen staan klaar en gaan mee zodra er verbinding is.', null);
+    else if (linked && st.lastSyncAt) setSyncNote('Laatst gesynchroniseerd om ' + tijdVan(st.lastSyncAt) + '.', null);
+    else setSyncNote('', null);
+  }
+
+  function tijdVan(iso) {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit' });
+  }
+
+  async function initSync() {
+    const sync = syncLayer();
+    if (!sync) return;
+    try {
+      await sync.init({
+        storage: storage,
+        keys: KEYS,
+        onRemoteUpdate: applyRemoteState,
+        onStatusChange: (st) => renderSync(st)
+      });
+    } catch (err) {
+      console.warn('[vonk] sync kon niet starten:', err.message);
+    }
+    renderSync();
+  }
+
+  function bindSyncEvents() {
+    const sync = syncLayer();
+    if (!sync) return;
+
+    el.btnSyncEnable.addEventListener('click', async () => {
+      el.btnSyncEnable.disabled = true;
+      try {
+        const code = await sync.enable();
+        renderSync();
+        setSyncNote('Je code is ' + sync.formatCode(code) + '. Schrijf hem over op je andere apparaat.', 'goed');
+        toast('Sync staat aan');
+      } catch (err) {
+        setSyncNote('Aanzetten mislukte: ' + err.message, 'fout');
+      } finally {
+        el.btnSyncEnable.disabled = false;
+      }
+    });
+
+    el.btnSyncCopy.addEventListener('click', async () => {
+      const code = sync.formatCode(sync.state.code || '');
+      try {
+        await navigator.clipboard.writeText(code);
+        toast('Code gekopieerd');
+      } catch (err) {
+        // clipboard mag geweigerd worden; selecteren kan de gebruiker altijd
+        setSyncNote('Kopiëren mocht niet. Selecteer de code hierboven en kopieer hem zelf.', null);
+      }
+    });
+
+    el.btnSyncUnlink.addEventListener('click', async () => {
+      await sync.unlink();
+      renderSync();
+      setSyncNote('Losgekoppeld. Je gegevens blijven op dit apparaat staan, en het andere ' +
+        'apparaat blijft gewoon werken met de oude code.', null);
+      toast('Sync losgekoppeld');
+    });
+
+    el.btnSyncLink.addEventListener('click', () => linkSync());
+    el.syncInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); linkSync(); }
+    });
+  }
+
+  async function linkSync() {
+    const sync = syncLayer();
+    if (!sync) return;
+    const input = el.syncInput.value;
+
+    if (!sync.isValidCode(input)) {
+      setSyncNote('Die code klopt niet: acht tekens, zonder 0, O, 1, I of L.', 'fout');
+      el.syncInput.focus();
+      return;
+    }
+
+    el.btnSyncLink.disabled = true;
+    setSyncNote('Bezig met koppelen...', null);
+    try {
+      const result = await sync.link(input);
+      applyRemoteState(result.data);
+      el.syncInput.value = '';
+      renderSync();
+      setSyncNote(
+        result.merged
+          ? 'Gekoppeld en samengevoegd: ' + result.stats.saved + ' bewaarde items, ' +
+            result.stats.followed + ' categorieën.'
+          : 'Gekoppeld. ' + result.stats.saved + ' bewaarde items op dit apparaat.',
+        'goed'
+      );
+      toast(result.merged ? 'Gekoppeld en samengevoegd' : 'Gekoppeld');
+    } catch (err) {
+      setSyncNote('Koppelen mislukte: ' + err.message, 'fout');
+    } finally {
+      el.btnSyncLink.disabled = false;
+    }
   }
 
   /* ------------------------------------------------------
@@ -1122,6 +1327,8 @@
       rebuildFeed();
     });
 
+    bindSyncEvents();
+
     el.btnSkip.addEventListener('click', () => swipeTop('left'));
     el.btnSave.addEventListener('click', () => swipeTop('right'));
     el.btnUndo.addEventListener('click', undoLast);
@@ -1239,6 +1446,10 @@
 
     const firstRun = !stored.hasFollowedKey || state.followed.size === 0;
     showScreen(firstRun ? 'categories' : 'feed');
+
+    // Sync draait pas als de feed staat: een binnenkomende stand van een
+    // ander apparaat moet tegen bekende categorieën aangehouden worden.
+    await initSync();
   }
 
   function registerServiceWorker() {

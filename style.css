@@ -37,6 +37,13 @@
 
 * { box-sizing: border-box; }
 
+/*
+ * Het hidden-attribuut komt uit het browser-stylesheet en verliest daardoor
+ * van elke eigen display-regel (.btn { display: inline-flex } en zo). Zonder
+ * deze regel blijven met el.hidden verborgen elementen gewoon staan.
+ */
+[hidden] { display: none !important; }
+
 html, body {
   height: 100%;
   margin: 0;
@@ -632,7 +639,7 @@ img { display: block; max-width: 100%; }
 /* =========================================================
    CATEGORIEËN
    ========================================================= */
-.screen--categories { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 16px 108px; position: relative; }
+.screen--categories { overflow-y: auto; -webkit-overflow-scrolling: touch; padding: 20px 16px 24px; position: relative; }
 .cat-head { max-width: 900px; margin: 0 auto 18px; width: 100%; }
 .cat-head__tools { display: flex; gap: 8px; margin-top: 14px; }
 
@@ -700,10 +707,93 @@ img { display: block; max-width: 100%; }
   transform: scale(1.08);
 }
 
+/* ---------- synchronisatie ---------- */
+.sync {
+  max-width: 900px;
+  width: 100%;
+  margin: 26px auto 0;
+  padding: 18px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.sync__head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.sync__title { font-size: 17px; }
+.sync__status {
+  flex: 0 0 auto;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 620;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.sync__status[data-status="aan"] { color: var(--success); border-color: rgba(36, 217, 134, 0.45); background: rgba(36, 217, 134, 0.12); }
+.sync__status[data-status="bezig"] { color: var(--accent-soft); border-color: rgba(10, 132, 255, 0.45); background: rgba(10, 132, 255, 0.12); }
+.sync__status[data-status="wacht"] { color: #ffc46b; border-color: rgba(255, 196, 107, 0.45); background: rgba(255, 196, 107, 0.12); }
+.sync__status[data-status="fout"] { color: var(--danger); border-color: rgba(255, 59, 92, 0.45); background: rgba(255, 59, 92, 0.12); }
+
+.sync__intro, .sync__note, .sync__label {
+  color: var(--text-dim);
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.sync__note:empty { display: none; }
+.sync__note[data-tone="fout"] { color: var(--danger); }
+.sync__note[data-tone="goed"] { color: var(--success); }
+
+.sync__code-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.sync__code {
+  flex: 1 1 200px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--border-hi);
+  background: rgba(10, 132, 255, 0.08);
+  color: var(--text);
+  font-family: "SF Mono", ui-monospace, "Cascadia Mono", Menlo, Consolas, monospace;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-align: center;
+  user-select: all;
+}
+
+.sync__link { display: flex; flex-direction: column; gap: 8px; }
+.sync__link-row { display: flex; gap: 10px; }
+.sync__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-family: "SF Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 16px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  outline: none;
+  transition: border-color var(--dur), background var(--dur);
+}
+.sync__input::placeholder { color: var(--text-faint); letter-spacing: 0.12em; }
+.sync__input:focus { border-color: var(--accent); background: var(--surface-hi); }
+
+@media (max-width: 460px) {
+  .sync__link-row { flex-direction: column; }
+  .sync__link-row .btn { width: 100%; }
+  .sync__code { font-size: 19px; }
+}
+
 .cat-footer {
   position: sticky;
   bottom: 0;
-  margin: 20px auto 0;
+  /* laatste blok op het scherm: zo dekt hij bij het uitscrollen niets af */
+  margin: 22px auto 0;
   max-width: 900px;
   width: 100%;
   display: flex;

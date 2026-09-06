@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Vonk — persoonlijke swipe-feed PWA met een scheduled function die echte bronnen ophaalt.",
   "scripts": {
+    "config": "node scripts/generate-config.js",
     "feed:local": "node scripts/run-local.mjs",
     "feed:verify": "node scripts/verify-sources.mjs",
     "test": "node --test scripts/test-lib.mjs"

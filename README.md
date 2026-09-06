@@ -67,6 +67,10 @@ scripts/
   run-local.mjs                complete feed-run zonder Netlify
   verify-sources.mjs           controleert elke bron-URL
   test-lib.mjs                 tests, draaien zonder netwerk
+  generate-config.js           schrijft de Supabase-config uit env vars
+
+sync.js                        synchronisatie tussen apparaten
+public/supabase-config.js      gegenereerd per deploy, staat NIET in git
 ```
 
 ## Opzet
@@ -85,9 +89,7 @@ zijn:
 
 ### Status
 
-Fase 1 en 2 zijn af. Fase 3 — synchronisatie via een syncode, zodat je saves op
-meerdere apparaten terugziet — komt later; `storage` in `script.js` is daar het
-enige aanknopingspunt voor.
+Fase 1, 2 en 3 zijn af.
 
 ## De feed (fase 2)
 
@@ -178,6 +180,110 @@ Dat controleert elke bron één voor één en meldt per bron of er parseerbare R
 uit komt en hoeveel items. De exitcode is 1 zodra een categorie geen enkele
 werkende bron overhoudt. Wat rood is, vervang je in `netlify/functions/lib/sources.js`.
 
+## Synchroniseren tussen apparaten (fase 3)
+
+Geen account, geen wachtwoord, geen e-mail: één **syncode** van acht tekens is
+de sleutel tot één rij in Supabase. Zet je sync aan, dan krijg je een code;
+voer je die code in op je telefoon, dan zien beide apparaten dezelfde bewaarde
+items, overgeslagen items en gevolgde categorieën.
+
+Synchronisatie is een opt-in bovenlaag. Zonder code — of zonder Supabase-
+configuratie — werkt de app precies zoals in fase 1 en 2, volledig lokaal.
+
+### Hoe het werkt
+
+- **Lokaal is de bron van waarheid.** Elke swipe schrijft direct naar
+  localStorage, dus de app wacht nooit op het netwerk. De server volgt op de
+  achtergrond, kort na de wijziging.
+- **Bij het openen** wordt de laatste stand opgehaald en lokaal toegepast. Staat
+  er lokaal nog iets klaar dat niet verstuurd is, dan wint lokaal en wordt dat
+  eerst weggeschreven. Verder geldt: laatste schrijfactie wint.
+- **Offline** blijft een wijziging in de wachtrij staan (één vlag in
+  localStorage, want de hele stand gaat in één keer mee). Zodra `online` afgaat
+  of de retry van 30 seconden vuurt, gaat hij alsnog weg. De status in het
+  instellingenscherm laat dat zien.
+- **Koppelen met bestaande gegevens** voegt eenmalig samen: bewaarde items op
+  id ontdubbeld (nieuwste `savedAt` wint), overgeslagen items en categorieën
+  als verzameling samengevoegd. Een item dat op het ene apparaat bewaard is en
+  op het andere overgeslagen, blijft bewaard.
+- **Loskoppelen** geeft dit apparaat een nieuwe eigen code. De rij in Supabase
+  blijft staan, dus je andere apparaat merkt er niets van.
+- **Undo blijft lokaal.** Eén stap terug hoeft niet over het netwerk.
+
+De syncode gebruikt een alfabet zonder 0, O, 1, I en L, zodat overtypen vanaf
+een schermpje geen giswerk wordt.
+
+### Wat je zelf moet instellen
+
+De agent die dit bouwde heeft geen toegang tot het Supabase-account (dat staat
+op een ander mailadres dan GitHub), dus deze stappen doe je handmatig.
+
+**1. Project aanmaken** op supabase.com. Let op de gratis limiet van twee
+actieve projecten; pauzeer er zo nodig een.
+
+**2. Tabel aanmaken** in de SQL Editor:
+
+```sql
+create table vonk_sync (
+  sync_code text primary key,
+  saved_items jsonb not null default '[]',
+  dismissed_ids jsonb not null default '[]',
+  followed_categories jsonb not null default '[]',
+  updated_at timestamptz not null default now()
+);
+
+alter table vonk_sync enable row level security;
+
+create policy "anon kan lezen en schrijven met syncode"
+  on vonk_sync for all
+  to anon
+  using (true)
+  with check (true);
+```
+
+**3. Sleutels in Netlify zetten** — Site settings → Environment variables:
+
+| Variabele | Waarde |
+|---|---|
+| `SUPABASE_URL` | Project Settings → API → Project URL |
+| `SUPABASE_ANON_KEY` | Project Settings → API → anon/public key |
+
+De build draait `node scripts/generate-config.js`, dat daar
+`public/supabase-config.js` van maakt. Dat bestand staat in `.gitignore`: er
+komt nooit een sleutel in git. Ontbreken de variabelen, dan schrijft het script
+een lege configuratie en draait de app zonder synchronisatie — geen crash, wel
+een duidelijke melding in het instellingenscherm.
+
+### Over de beveiliging
+
+De policy hierboven is bewust open: er is geen inlogsysteem, dus de syncode zelf
+is het geheim. Eén ding om te weten voordat je hem zo laat staan: `using (true)`
+geldt ook voor `select` zónder filter. Wie de anon key uit de gepubliceerde app
+haalt, kan daarmee in principe álle rijen opvragen — inclusief andermans
+syncodes — of ze wissen. Voor een app die alleen jij gebruikt is dat vooral
+theoretisch, en het is precies de afweging die bij "geen account" hoort.
+
+Wil je het toch dichtzetten zonder een accountsysteem te bouwen, dan is de
+route: rechten op de tabel intrekken voor `anon` en twee functies met
+`security definer` toevoegen die de code als argument nemen (`vonk_pull(code)`
+en `vonk_push(code, ...)`). De client praat dan met die functies in plaats van
+rechtstreeks met de tabel — een kleine wijziging in `sync.js`, maar geen die
+hier al gemaakt is.
+
+### Lokaal uitproberen
+
+```bash
+SUPABASE_URL=https://jouwproject.supabase.co \
+SUPABASE_ANON_KEY=jouw-anon-key \
+  npm run config
+
+python3 -m http.server 8000
+```
+
+Twee browserprofielen (of normaal plus incognito) gedragen zich als twee
+apparaten: elk heeft zijn eigen localStorage. Zet sync aan in het ene, voer de
+code in bij het andere.
+
 ## Lokaal testen
 
 ```bash
@@ -218,9 +324,11 @@ De site is statisch, er is geen build-stap: `publish = "."`. Netlify installeert
 de dependencies en bundelt de functions zelf.
 
 1. Koppel de repo aan een Netlify-site
-2. Deploy — scheduled functions draaien alleen op gepubliceerde deploys
-3. `netlify functions:invoke fetch-feed` of wacht op de eerste cron-run
-4. Controleer `/.netlify/functions/get-feed?debug=1`
+2. Zet `SUPABASE_URL` en `SUPABASE_ANON_KEY` in de environment variables
+   (overslaan kan: de app draait dan zonder synchronisatie)
+3. Deploy — scheduled functions draaien alleen op gepubliceerde deploys
+4. `netlify functions:invoke fetch-feed` of wacht op de eerste cron-run
+5. Controleer `/.netlify/functions/get-feed?debug=1`
 
 Het schema staat in `netlify.toml` (`0 5 * * *`, UTC — 07:00 Nederlandse
 zomertijd). Zet het op één plek: óf in `netlify.toml`, óf als

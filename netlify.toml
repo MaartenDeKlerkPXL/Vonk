@@ -6,6 +6,10 @@
 
 [build]
   publish = "."
+  # Genereert public/supabase-config.js uit SUPABASE_URL en SUPABASE_ANON_KEY.
+  # Ontbreken die, dan schrijft het script een lege configuratie en draait de
+  # app zonder synchronisatie.
+  command = "node scripts/generate-config.js"
 
 [functions]
   directory = "netlify/functions"

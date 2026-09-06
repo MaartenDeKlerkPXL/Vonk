@@ -122,6 +122,37 @@
         </div>
       </div>
       <div class="cat-grid" id="catGrid"></div>
+      <section class="sync glass" id="syncPanel" aria-labelledby="syncTitle">
+        <div class="sync__head">
+          <h2 class="sync__title" id="syncTitle">Synchroniseren</h2>
+          <span class="sync__status" id="syncStatus">uit</span>
+        </div>
+        <p class="sync__intro" id="syncIntro">
+          Met een syncode zie je je bewaarde items op al je apparaten. Geen account, geen wachtwoord:
+          de code is de sleutel. Bewaar hem, en deel hem niet.
+        </p>
+
+        <div class="sync__code-row" id="syncCodeRow" hidden>
+          <div class="sync__code" id="syncCode" aria-live="polite"></div>
+          <button type="button" class="btn btn--ghost btn--sm" id="btnSyncCopy">Kopieer</button>
+          <button type="button" class="btn btn--ghost btn--sm" id="btnSyncUnlink">Loskoppelen</button>
+        </div>
+
+        <button type="button" class="btn btn--primary" id="btnSyncEnable">Sync aanzetten</button>
+
+        <div class="sync__link">
+          <label class="sync__label" for="syncInput">Heb je al een code? Voer hem hier in.</label>
+          <div class="sync__link-row">
+            <input type="text" id="syncInput" class="sync__input" placeholder="XXXX-XXXX"
+                   autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="9"
+                   inputmode="text" aria-describedby="syncNote">
+            <button type="button" class="btn btn--ghost" id="btnSyncLink">Koppelen</button>
+          </div>
+        </div>
+
+        <p class="sync__note" id="syncNote"></p>
+      </section>
+
       <div class="cat-footer glass">
         <span class="cat-footer__count" id="catCount"></span>
         <button type="button" class="btn btn--primary" id="btnCatDone">Naar mijn feed</button>
@@ -172,6 +203,11 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
+  <!-- Door de build gegenereerd uit de Netlify environment variables.
+       Ontbreekt het bestand (lokaal, of sync niet ingesteld), dan draait
+       de app gewoon door zonder synchronisatie. -->
+  <script src="public/supabase-config.js"></script>
+  <script src="sync.js" defer></script>
   <script src="script.js" defer></script>
 </body>
 </html>
