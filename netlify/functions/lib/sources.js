@@ -23,7 +23,7 @@ export const CATEGORIES = [
   { id: 'memes', label: 'Memes', icon: '◉', accent: '#ffd24d', description: 'Korte humor, meer niet.' },
   { id: 'leerzaam', label: 'Leerzame artikelen', icon: '▤', accent: '#9d8cff', description: 'Diepgang die je iets bijbrengt.' },
   { id: 'roda-jc', label: 'Roda JC', icon: '⚽', accent: '#ffd84d', description: 'Nieuws en uitslagen uit Kerkrade.' },
-  { id: 'vue-kerkrade', label: 'Vue Kerkrade', icon: '▶', accent: '#ff5f8f', description: 'Bioscoopagenda en releases.' },
+  { id: 'vue-kerkrade', label: 'Vue Kerkrade', icon: '▶', accent: '#ff5f8f', description: 'Nu in de bioscoop (NL).' },
   { id: 'ui-ux', label: 'UI/UX & webdesign', icon: '◰', accent: '#5ce1c0', description: 'Interface-inspiratie en designpatronen.' },
   { id: 'gadgets', label: 'Gadgets & tech', icon: '▣', accent: '#8ab4ff', description: 'Reviews en nieuwe hardware.' },
   { id: 'ruimtevaart', label: 'Ruimtevaart & wetenschap', icon: '☄', accent: '#a48bff', description: 'Missies, ontdekkingen, onderzoek.' },
@@ -74,7 +74,12 @@ export const SOURCES = [
   { id: 'roda-news', name: 'Google News — "Roda JC"', category: 'roda-jc', type: 'google-news', url: 'https://news.google.com/rss/search?q=%22Roda+JC%22&hl=nl&gl=NL&ceid=NL:nl' },
 
   // ---------- Vue Kerkrade ----------
-  { id: 'vue-kerkrade', name: 'Vue Kerkrade', category: 'vue-kerkrade', type: 'scrape', url: 'https://www.vuecinemas.nl/cinema/kerkrade/nu-in-de-bioscoop', risk: 'html-structuur-kan-wijzigen' },
+  // Was een HTML-scraper; Vue laadt de programmering nu client-side achter
+  // een Cloudflare-botcheck, dus dat is niet meer haalbaar zonder
+  // bot-detectie te omzeilen. Vervangen door TMDB "nu in de bioscoop" NL:
+  // geen exacte Kerkrade-agenda, maar wel echte films met titel + synopsis.
+  // Vereist env var TMDB_API_KEY.
+  { id: 'vue-kerkrade', name: 'TMDB — nu in de bioscoop (NL)', category: 'vue-kerkrade', type: 'tmdb', url: 'https://api.themoviedb.org/3/movie/now_playing', risk: 'vereist-tmdb-api-key' },
 
   // ---------- UI/UX & webdesign ----------
   { id: 'smashing', name: 'Smashing Magazine', category: 'ui-ux', type: 'rss', url: 'https://www.smashingmagazine.com/feed' },

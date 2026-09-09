@@ -18,7 +18,7 @@ import { fetchFeed } from './rss.js';
 import { fetchRedditFeed } from './reddit.js';
 import { fetchGoogleNews } from './google-news.js';
 import { fetchF1Calendar } from './f1-calendar.js';
-import { fetchVueKerkrade } from './scrape-vue-kerkrade.js';
+import { fetchTmdbNowPlaying } from './tmdb-now-playing.js';
 import { normalizeEntry, matchesSource, canonicalUrl } from './normalize.js';
 
 export const FEED_VERSION = 3;
@@ -50,8 +50,8 @@ async function collectRaw(source, fetchOptions) {
     case 'f1': {
       return { items: await fetchF1Calendar(source, fetchOptions) };
     }
-    case 'scrape': {
-      const { items, warning, strategy } = await fetchVueKerkrade(source, fetchOptions);
+    case 'tmdb': {
+      const { items, warning, strategy } = await fetchTmdbNowPlaying(source, fetchOptions);
       return { items, warning, note: strategy && 'strategie: ' + strategy };
     }
     case 'rss':

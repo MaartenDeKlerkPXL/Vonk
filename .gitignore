@@ -11,3 +11,6 @@ data/last-run.json
 
 # door de build gegenereerd uit de Netlify env vars - nooit in git
 public/supabase-config.js
+
+# lokale Netlify CLI-state
+.netlify/
